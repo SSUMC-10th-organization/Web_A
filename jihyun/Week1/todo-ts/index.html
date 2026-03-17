@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Todo</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="todo__container">
+    <header class="todo__container__header">
+      <h1 class="todo__container__title">My Todo</h1>
+    </header>
+
+    <main class="todo__container__main">
+      <form id="todo-form" class="todo__container__form">
+        <input
+          id="todo-input"
+          class="todo__container__input"
+          type="text"
+          placeholder="할 일을 입력해 주세요"
+          required
+        />
+        <button type="submit" class="todo__container__button">할 일 추가</button>
+      </form>
+
+      <div class="render__container">
+        <section class="render__container__section">
+          <h2 class="render__container__title">할 일</h2>
+          <ul id="todo-list" class="render__container__list"></ul>
+        </section>
+
+        <section class="render__container__section">
+          <h2 class="render__container__title">완료</h2>
+          <ul id="done-list" class="render__container__list"></ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="./dist/index.js"></script>
+</body>
+</html>
