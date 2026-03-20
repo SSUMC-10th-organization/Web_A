@@ -25,7 +25,8 @@ function deleteTodo(id) {
 }
 function createTodoItem(todo) {
     const item = document.createElement("li");
-    item.className = todo.status === "done" ? "todo-item todo-item--done" : "todo-item";
+    item.className =
+        todo.status === "done" ? "todo-item todo-item--done" : "todo-item";
     const text = document.createElement("span");
     text.className = "todo-item__text";
     text.textContent = todo.text;
