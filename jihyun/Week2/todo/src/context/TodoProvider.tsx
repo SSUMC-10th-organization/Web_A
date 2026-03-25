@@ -2,7 +2,9 @@ import {
 	type ChangeEvent,
 	createContext,
 	type ReactNode,
+	useCallback,
 	useContext,
+	useMemo,
 	useState,
 } from "react";
 import type { Todo } from "../types/todo";
@@ -24,13 +26,13 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
 	const [todos, setTodos] = useState<Todo[]>([]);
 	const [doneTodos, setDoneTodos] = useState<Todo[]>([]);
 
-	const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+	// ✅ useCallback 추가
+	const handleChangeInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 		setInput(e.target.value);
-	};
+	}, []);
 
-	const addTodo = () => {
+	const addTodo = useCallback(() => {
 		const trimmed = input.trim();
-
 		if (!trimmed) return;
 
 		const newTodo: Todo = {
@@ -40,26 +42,37 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
 
 		setTodos((prev) => [...prev, newTodo]);
 		setInput("");
-	};
+	}, [input]);
 
-	const completeTodo = (todo: Todo) => {
+	const completeTodo = useCallback((todo: Todo) => {
 		setTodos((prev) => prev.filter((item) => item.id !== todo.id));
 		setDoneTodos((prev) => [...prev, todo]);
-	};
+	}, []);
 
-	const deleteDoneTodo = (todo: Todo) => {
+	const deleteDoneTodo = useCallback((todo: Todo) => {
 		setDoneTodos((prev) => prev.filter((item) => item.id !== todo.id));
-	};
+	}, []);
 
-	const value = {
-		input,
-		todos,
-		doneTodos,
-		handleChangeInput,
-		addTodo,
-		completeTodo,
-		deleteDoneTodo,
-	};
+	const value = useMemo(
+		() => ({
+			input,
+			todos,
+			doneTodos,
+			handleChangeInput,
+			addTodo,
+			completeTodo,
+			deleteDoneTodo,
+		}),
+		[
+			input,
+			todos,
+			doneTodos,
+			handleChangeInput,
+			addTodo,
+			completeTodo,
+			deleteDoneTodo,
+		],
+	);
 
 	return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;
 };
