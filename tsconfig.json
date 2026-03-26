@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "jsx": "react-jsx",
     "module": "ESNext",
-    "moduleResolution": "node",
-    "strict": true,
+    "moduleResolution": "bundler",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowJs": true,
+    "strict": true,
     "noEmit": true,
-    "isolatedModules": true
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client", "@tailwindcss/vite"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-  "exclude": ["node_modules"]
+  "include": ["eve/Week2/Dark_Mode/src/**/*"],
+  "exclude": ["node_modules", "**/React_Todolist/**", "**/Week1/**"]
 }
