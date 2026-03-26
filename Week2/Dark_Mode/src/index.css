@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --dark-mode: class;
+}
+
+.dark .bg-white {
+  background-color: #0f172a !important;
+}
+.dark .text-black {
+  color: red !important;
+}
