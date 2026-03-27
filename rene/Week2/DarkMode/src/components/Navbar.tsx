@@ -8,7 +8,7 @@ export default function Navbar() {
 
   return (
     <nav className={clsx(
-      'flex justify-end items-center self-stretch h-16 px-6',
+      'flex justify-end items-center self-stretch h-16 px-6 transition-colors duration-300',
       isLightMode ? 'bg-white' : 'bg-gray-800'
     )}>
       <ThemeToggleButton />
