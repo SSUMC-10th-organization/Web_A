@@ -1,6 +1,5 @@
 import { ThemeProvider } from './context/ThemeProvider';
 import ContentPage from './ContentPage';
-import './App.css'
 
 function App() {
   return (
