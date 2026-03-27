@@ -3,36 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Todo</title>
+  <title>My Todo List</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div class="todo__container">
-    <header class="todo__container__header">
-      <h1 class="todo__container__title">My Todo</h1>
+  <div class="todo-app">
+    <header class="todo-app__header">
+      <h1 class="todo-app__title">My Todo List</h1>
+      <p class="todo-app__description">TypeScript로 만드는 간단한 할 일 관리 앱</p>
     </header>
 
-    <main class="todo__container__main">
-      <form id="todo-form" class="todo__container__form">
+    <main class="todo-app__main">
+      <form id="todo-form" class="todo-form">
         <input
           id="todo-input"
-          class="todo__container__input"
+          class="todo-form__input"
           type="text"
           placeholder="할 일을 입력해 주세요"
           required
         />
-        <button type="submit" class="todo__container__button">할 일 추가</button>
+        <button type="submit" class="todo-form__button">추가</button>
       </form>
 
-      <div class="render__container">
-        <section class="render__container__section">
-          <h2 class="render__container__title">할 일</h2>
-          <ul id="todo-list" class="render__container__list"></ul>
+      <div class="todo-board">
+        <section class="todo-board__section">
+          <h2 class="todo-board__title">할 일</h2>
+          <ul id="todo-list" class="todo-board__list"></ul>
         </section>
 
-        <section class="render__container__section">
-          <h2 class="render__container__title">완료</h2>
-          <ul id="done-list" class="render__container__list"></ul>
+        <section class="todo-board__section">
+          <h2 class="todo-board__title">완료</h2>
+          <ul id="done-list" class="todo-board__list"></ul>
         </section>
       </div>
     </main>
