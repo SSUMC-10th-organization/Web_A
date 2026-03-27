@@ -10,8 +10,8 @@ export default function App() {
       <h1 className="todo-container__header">{title}</h1>
       <TodoForm />
       <div className="render-container">
-        <TodoSection title="미완료" status="미완료" />
-        <TodoSection title="완료" status="완료" />
+        <TodoSection title="미완료" status="TODO" />
+        <TodoSection title="완료" status="DONE" />
       </div>
     </div>
   )

@@ -8,7 +8,7 @@ type Props = {
 export default function TodoItem({ todo }: Props) {
   const { completeTodo, deleteTodo } = useTodo()
 
-  const isDone = todo.status === '완료'
+  const isDone = todo.status === 'DONE'
   const buttonLabel = isDone ? '삭제' : '완료'
   const buttonClassName = isDone ? 'delete' : 'complete'
   const handleAction = () => (isDone ? deleteTodo(todo.id) : completeTodo(todo.id))

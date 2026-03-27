@@ -14,11 +14,11 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   const [todos, setTodos] = useState<TodoItem[]>([])
 
   const addTodo = (text: string) => {
-    setTodos((prev) => [...prev, { id: Date.now(), text, status: '미완료' }])
+    setTodos((prev) => [...prev, { id: Date.now(), text, status: 'TODO' }])
   }
 
   const completeTodo = (id: number) => {
-    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, status: '완료' } : t)))
+    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, status: 'DONE' } : t)))
   }
 
   const deleteTodo = (id: number) => {

@@ -1,4 +1,4 @@
-export type TodoStatus = '미완료' | '완료'
+export type TodoStatus = 'TODO' | 'DONE'
 
 export type TodoItem = {
   id: number
