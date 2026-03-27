@@ -9,7 +9,7 @@ export default function ThemeContent() {
   return (
     <div
       className={clsx(
-        'flex flex-col items-center justify-center h-dvh w-full px-6 gap-8 transition-colors duration-300',
+        'flex flex-col items-center justify-center h-dvh w-full px-6 gap-8',
         isLightMode ? 'bg-white text-gray-900' : 'bg-gray-800 text-white'
       )}
     >
