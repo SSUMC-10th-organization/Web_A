@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+	background-color: white;
+	color: black;
+}
+
+/* html 태그에 .dark 클래스가 붙었을 때 */
+html.dark,
+.dark {
+	background-color: #18181b;
+	color: white;
+}
+
+/* 모든 자식 요소에도 강제 적용 (최후의 수단) */
+.dark * {
+	background-color: inherit;
+	color: inherit;
+}

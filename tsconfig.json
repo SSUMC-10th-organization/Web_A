@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"jsx": "react-jsx",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"skipLibCheck": true,
+		"allowImportingTsExtensions": true,
+		"allowJs": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"strict": false,
+		"baseUrl": ".",
+		"paths": {
+			"react": [
+				"./eve/Week2/DarkMode/node_modules/react",
+				"./eve/Week2/React_Todolist/node_modules/react"
+			],
+			"react-dom/*": [
+				"./eve/Week2/DarkMode/node_modules/react-dom/*",
+				"./eve/Week2/React_Todolist/node_modules/react-dom/*"
+			]
+		}
+	},
+	"include": [
+		"eve/Week2/DarkMode/src/**/*",
+		"eve/Week2/React_Todolist/src/**/*"
+	],
+	"exclude": ["**/node_modules"]
+}
