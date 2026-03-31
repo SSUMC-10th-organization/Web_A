@@ -1,0 +1,35 @@
+import { useState } from 'react';
+import type { Movie } from '../types/movie';
+
+interface MovieCardProps {
+  movie: Movie;
+}
+
+export default function MovieCard({ movie }: MovieCardProps) {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <div
+      className="relative overflow-hidden rounded-xl shadow-lg cursor-pointer transition-transform duration-300 hover:scale-105"
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
+      <img
+        src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+        alt={movie.title}
+        className="w-full h-full object-cover"
+      />
+
+      {isHover && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-black/80 to-black/40 p-4 text-white backdrop-blur-sm">
+          <h2 className="text-center text-lg font-bold leading-snug">
+            {movie.title}
+          </h2>
+          <p className="mt-2 line-clamp-5 text-center text-sm text-gray-200">
+            {movie.overview}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
