@@ -1,13 +1,13 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
-import type { MovieDetail } from '../types/movie';
+import type { Cast, Crew, CreditsResponse, MovieDetail } from '../types/movie';
 
 export default function MovieDetailPage() {
   const { movieId } = useParams();
 
   const [movie, setMovie] = useState<MovieDetail | null>(null);
+  const [credits, setCredits] = useState<CreditsResponse | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -19,16 +19,28 @@ export default function MovieDetailPage() {
         setIsPending(true);
         setIsError(false);
 
-        const response = await axios.get<MovieDetail>(
-          `https://api.themoviedb.org/3/movie/${movieId}?language=ko-KR`,
-          {
+        const [detailResponse, creditsResponse] = await Promise.all([
+          fetch(`https://api.themoviedb.org/3/movie/${movieId}?language=ko-KR`, {
             headers: {
               Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
             },
-          }
-        );
+          }),
+          fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits?language=ko-KR`, {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
+            },
+          }),
+        ]);
 
-        setMovie(response.data);
+        if (!detailResponse.ok || !creditsResponse.ok) {
+          throw new Error('상세 정보 요청 실패');
+        }
+
+        const detailData: MovieDetail = await detailResponse.json();
+        const creditsData: CreditsResponse = await creditsResponse.json();
+
+        setMovie(detailData);
+        setCredits(creditsData);
       } catch {
         setIsError(true);
       } finally {
@@ -41,7 +53,7 @@ export default function MovieDetailPage() {
 
   if (isPending) return <LoadingSpinner />;
 
-  if (isError || !movie) {
+  if (isError || !movie || !credits) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <strong className="text-2xl text-red-500">
@@ -51,34 +63,88 @@ export default function MovieDetailPage() {
     );
   }
 
+  const directors = credits.crew.filter((person: Crew) => person.job === 'Director');
+  const topCast = credits.cast.slice(0, 10);
+
   return (
-    <div className="grid gap-8 py-8 md:grid-cols-[300px_1fr]">
-      <img
-        src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-        alt={movie.title}
-        className="w-full rounded-2xl shadow-lg"
-      />
+    <div className="space-y-8 py-6">
+      <section className="overflow-hidden rounded-2xl bg-black text-white shadow-lg">
+        <div className="relative">
+          {movie.backdrop_path ? (
+            <img
+              src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
+              alt={movie.title}
+              className="h-[260px] w-full object-cover opacity-70 md:h-[360px]"
+            />
+          ) : (
+            <div className="h-[260px] w-full bg-gray-800 md:h-[360px]" />
+          )}
 
-      <div>
-        <h1 className="mb-4 text-3xl font-bold">{movie.title}</h1>
+          <div className="absolute inset-0 bg-black/40" />
 
-        <div className="mb-4 flex flex-wrap gap-2">
-          {movie.genres.map((genre) => (
-            <span
-              key={genre.id}
-              className="rounded-full bg-[#BEDAB1] px-3 py-1 text-sm text-white"
+          <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+            <h1 className="mb-3 text-3xl font-bold md:text-4xl">{movie.title}</h1>
+            <p className="mb-2 text-sm text-gray-200">
+              평점 {movie.vote_average} · 개봉일 {movie.release_date}
+            </p>
+            <div className="mb-4 flex flex-wrap gap-2">
+              {movie.genres.map((genre) => (
+                <span
+                  key={genre.id}
+                  className="rounded-full bg-white/20 px-3 py-1 text-sm"
+                >
+                  {genre.name}
+                </span>
+              ))}
+            </div>
+            <p className="max-w-3xl text-sm leading-6 text-gray-100 md:text-base">
+              {movie.overview}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-2xl font-bold">감독/출연</h2>
+
+        {directors.length > 0 && (
+          <div className="mb-6">
+            <p className="mb-2 font-semibold">감독</p>
+            <div className="flex flex-wrap gap-2">
+              {directors.map((director) => (
+                <span
+                  key={director.id}
+                  className="rounded-full bg-[#BEDAB1] px-3 py-1 text-sm text-white"
+                >
+                  {director.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
+          {topCast.map((person: Cast) => (
+            <div
+              key={person.cast_id ?? person.id}
+              className="rounded-xl bg-gray-50 p-3 text-center shadow-sm"
             >
-              {genre.name}
-            </span>
+              {person.profile_path ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w185${person.profile_path}`}
+                  alt={person.name}
+                  className="mx-auto mb-3 h-24 w-24 rounded-full object-cover"
+                />
+              ) : (
+                <div className="mx-auto mb-3 h-24 w-24 rounded-full bg-gray-300" />
+              )}
+
+              <p className="text-sm font-semibold">{person.name}</p>
+              <p className="mt-1 text-xs text-gray-500">{person.character}</p>
+            </div>
           ))}
         </div>
-
-        <p className="mb-2 text-gray-700">개봉일: {movie.release_date}</p>
-        <p className="mb-2 text-gray-700">평점: {movie.vote_average}</p>
-        <p className="mb-6 text-gray-700">상영 시간: {movie.runtime}분</p>
-
-        <p className="leading-7 text-gray-800">{movie.overview}</p>
-      </div>
+      </section>
     </div>
   );
 }
