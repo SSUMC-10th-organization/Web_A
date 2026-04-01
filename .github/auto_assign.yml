@@ -1,9 +1,0 @@
-reviewers:
-  - taegeon2
-  - bum22
-  - sukhoon912
-  - yjudy0531
-  - YounchanHa
-  - eunhyekimyeah
-
-numberOfReviewers: 0  # 0 = 전원 배정 (PR 작성자는 자동으로 제외됨)
