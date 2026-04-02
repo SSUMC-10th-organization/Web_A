@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import PopularPage from './pages/Popular';
+import PopularPage from './pages/popular';
 import NotFoundPage from './pages/NotFound';
 import RootLayout from './layout/root-layout';
 
