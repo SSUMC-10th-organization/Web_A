@@ -1,8 +1,8 @@
-type Props = {
+interface Props {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-};
+}
 
 const Pagination = ({ page, totalPages, onPageChange }: Props) => {
   // 현재 페이지 기준 앞뒤 2페이지씩 표시

@@ -12,8 +12,8 @@ const Navbar = () => {
   return (
     <nav className="w-full bg-black text-white sticky top-0 z-50 shadow-lg">
       <div className="mx-auto px-6 flex items-center justify-between h-16">
-        <NavLink to="/" className="text-xl font-bold tracking-wide text-white hover:text-yellow-500 transition-colors">
-          RENE movieList
+        <NavLink to="/">
+          <img src="/logo.png" alt="RENE movie" className="h-8 w-auto ml-4" />
         </NavLink>
         <ul className="flex items-center gap-1">
           {NAV_LINKS.map(({ to, label }) => (

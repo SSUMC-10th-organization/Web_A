@@ -12,7 +12,7 @@ const Upcoming = () => {
 
   return (
     <div className="px-8 py-5 bg-black min-h-screen">
-      <h1 className="text-2xl text-left font-bold mb-6 text-white">개봉 예정</h1>
+      <p className="text-[48px] pt-12 text-left font-extrabold mb-6 text-white">개봉 예정</p>
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       {isPending && <LoadingSpinner />}
       {isError && <p className="text-center text-red-400 py-20">오류가 발생했습니다. 다시 시도해주세요.</p>}
