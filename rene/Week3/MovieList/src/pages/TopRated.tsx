@@ -5,14 +5,14 @@ import Pagination from "../components/Pagination";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const Popular = () => {
+const TopRated = () => {
   const { movies, isPending, isError, page, setPage, totalPages } = useMovies(
-    `${API_BASE_URL}/movie/popular?language=en-US`
+    `${API_BASE_URL}/movie/top_rated?language=en-US`
   );
 
   return (
     <div className="px-8 py-5 bg-black min-h-screen">
-      <h1 className="text-2xl text-left font-bold mb-6 text-white">인기 영화</h1>
+      <h1 className="text-2xl text-left font-bold mb-6 text-white">평점 높은</h1>
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       {isPending && <LoadingSpinner />}
       {isError && <p className="text-center text-red-400 py-20">오류가 발생했습니다. 다시 시도해주세요.</p>}
@@ -21,4 +21,4 @@ const Popular = () => {
   );
 };
 
-export default Popular;
+export default TopRated;

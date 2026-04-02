@@ -1,11 +1,11 @@
 import type { Movie } from "../types/movie";
 import MovieCard from "./MovieCard";
 
-type Props = {
+interface MovieGridProps {
   movies: Movie[];
-};
+}
 
-const MovieGrid = ({ movies }: Props) => {
+const MovieGrid = ({ movies }: MovieGridProps) => {
   if (movies.length === 0) {
     return <div className="text-center py-20 text-white">검색 결과가 없습니다.</div>;
   }
