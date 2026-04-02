@@ -1,15 +1,17 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "strict": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowJs": true,
-    "noEmit": true,
-    "isolatedModules": true
-  },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-  "exclude": ["node_modules"]
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"strict": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"noEmit": true,
+		"isolatedModules": true,
+    "outDir": "./dist",       // 컴파일된 파일이 저장되는 곳
+    "rootDir": "./src",        // 소스 파일이 위치한 곳
+	},
+	"include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+	"exclude": ["node_modules", "dist"]
 }
