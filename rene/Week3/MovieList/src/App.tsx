@@ -1,20 +1,18 @@
-import './App.css'
-
-// 1. React Router에서 필요한 함수/컴포넌트를 import
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import HomePage from './pages/popular';
+import PopularPage from './pages/Popular';
+import NotFoundPage from './pages/NotFound';
 import RootLayout from './layout/root-layout';
 
-// 2. 경로(path)와 보여줄 화면(element)를 정의
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <NotFoundPage />,
     children: [
       {
         index:true,
-        element: <HomePage />
+        element: <PopularPage />
       },
     ],
   },

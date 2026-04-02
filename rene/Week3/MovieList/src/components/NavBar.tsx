@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 
 const NAV_LINKS = [
   { to: "/", label: "Popular" },
-  { to: "/movies", label: "Movies" },
 ];
 
 const Navbar = () => {
