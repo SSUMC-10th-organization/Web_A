@@ -1,4 +1,11 @@
-import { Movie } from "../movieInfo"; 
+import { jsx } from "react/jsx-runtime";
+
+export interface Movie {
+  id: number;
+  title: string;
+  poster_path: string;
+  overview: string;
+}
 
 interface MovieCardProps {
   movie: Movie;
