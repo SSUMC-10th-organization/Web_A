@@ -29,8 +29,14 @@ const MovieDetail = () => {
 
   useEffect(() => {
     const fetchMovieData = async () => {
-      const API_KEY = '538e0fee88fad6784ed923e64596bc87';
+      const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
       const BASE_URL = 'https://api.themoviedb.org/3';
+
+      if (!API_KEY) {
+        setError("API 키가 설정되지 않았습니다. .env 파일을 확인하세요.");
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
