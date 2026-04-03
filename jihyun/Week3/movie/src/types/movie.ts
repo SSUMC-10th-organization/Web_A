@@ -52,3 +52,38 @@ export interface MovieDetail {
   vote_average: number;
   vote_count: number;
 }
+
+export interface Cast {
+  adult: boolean;
+  cast_id?: number;
+  character: string;
+  credit_id: string;
+  gender: number | null;
+  id: number;
+  known_for_department: string;
+  name: string;
+  order: number;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+export interface Crew {
+  adult: boolean;
+  credit_id: string;
+  department: string;
+  gender: number | null;
+  id: number;
+  job: string;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+export interface CreditsResponse {
+  id: number;
+  cast: Cast[];
+  crew: Crew[];
+}

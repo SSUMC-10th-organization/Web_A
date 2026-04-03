@@ -1,16 +1,14 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import MovieCard from '../components/MovieCard';
 import type { Movie, MovieResponse } from '../types/movie';
 
 export default function MoviePage() {
-  const { category } = useParams();
-  const currentCategory = category ?? 'popular';
-
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get('page')) || 1;
+
+  const currentCategory = searchParams.get('category') ?? 'popular';
+  const currentPage = Number(searchParams.get('page') ?? '1');
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isPending, setIsPending] = useState(false);
@@ -22,7 +20,7 @@ export default function MoviePage() {
         setIsPending(true);
         setIsError(false);
 
-        const response = await axios.get<MovieResponse>(
+        const response = await fetch(
           `https://api.themoviedb.org/3/movie/${currentCategory}?language=ko-KR&page=${currentPage}`,
           {
             headers: {
@@ -31,7 +29,12 @@ export default function MoviePage() {
           }
         );
 
-        setMovies(response.data.results);
+        if (!response.ok) {
+          throw new Error('영화 목록 요청 실패');
+        }
+
+        const data: MovieResponse = await response.json();
+        setMovies(data.results);
       } catch {
         setIsError(true);
       } finally {
@@ -44,11 +47,17 @@ export default function MoviePage() {
 
   const handlePrevPage = () => {
     if (currentPage === 1) return;
-    setSearchParams({ page: String(currentPage - 1) });
+    setSearchParams({
+      category: currentCategory,
+      page: String(currentPage - 1),
+    });
   };
 
   const handleNextPage = () => {
-    setSearchParams({ page: String(currentPage + 1) });
+    setSearchParams({
+      category: currentCategory,
+      page: String(currentPage + 1),
+    });
   };
 
   if (isError) {
