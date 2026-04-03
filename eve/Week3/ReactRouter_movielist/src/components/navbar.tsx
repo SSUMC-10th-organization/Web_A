@@ -1,11 +1,10 @@
-// src/components/navbar.tsx
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
 export default function Navbar() {
     return (
         <Nav>
-            <Logo to="/">YONG MOVIE</Logo>
+            <Logo to="/">HOON MOVIE</Logo>
             
             <Menu>
                 <StyledNavLink to="/" end>홈</StyledNavLink>

@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import MovieCard from "../components/movie-card";
 
-const API_KEY = "538e0fee88fad6784ed923e64596bc87";
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 export default function MoviesPage({ category, title }: { category: string, title: string }) {
     const [movies, setMovies] = useState([]);

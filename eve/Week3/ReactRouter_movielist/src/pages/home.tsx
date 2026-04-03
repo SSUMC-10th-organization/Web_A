@@ -1,10 +1,9 @@
-// src/pages/home.tsx
 import styled from "styled-components";
 
 export default function HomePage() {
     return (
         <HomeWrapper>
-            <h1>🎬 Welcome to YONG MOVIE</h1>
+            <h1>🎬 Welcome to HOON MOVIE</h1>
             <p>다양한 영화 정보를 카테고리별로 확인해보세요!</p>
         </HomeWrapper>
     );
