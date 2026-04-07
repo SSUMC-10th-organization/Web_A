@@ -1,6 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { postSignIn } from '../apis/auth';
+import { LOCAL_STORAGE_KEY } from '../constants/localStorage';
 import useForm from '../hooks/useForm';
+import useLocalStorage from '../hooks/useLocalStorage';
 import {
   type UserSignInInformation,
   validateSignIn,
@@ -11,7 +14,12 @@ export default function LoginPage() {
   const [submitError, setSubmitError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validate = useCallback(validateSignIn, []);
+  const { setItem: setAccessToken } = useLocalStorage(
+    LOCAL_STORAGE_KEY.accessToken
+  );
+  const { setItem: setRefreshToken } = useLocalStorage(
+    LOCAL_STORAGE_KEY.refreshToken
+  );
 
   const { values, errors, touched, getInputProps } =
     useForm<UserSignInInformation>({
@@ -19,7 +27,7 @@ export default function LoginPage() {
         email: '',
         password: '',
       },
-      validate,
+      validate: validateSignIn,
     });
 
   const isDisabled = useMemo(() => {
@@ -35,24 +43,10 @@ export default function LoginPage() {
       setIsSubmitting(true);
       setSubmitError('');
 
-      const response = await fetch('http://localhost:8000/v1/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await postSignIn(values);
 
-      if (!response.ok) {
-        throw new Error('로그인에 실패했습니다.');
-      }
-
-      const data = await response.json();
-
-      console.log('로그인 성공:', data);
-
-      localStorage.setItem('accessToken', data.data.accessToken ?? '');
-localStorage.setItem('refreshToken', data.data.refreshToken ?? '');
+      setAccessToken(response.data.accessToken);
+      setRefreshToken(response.data.refreshToken);
 
       alert('로그인 성공!');
       navigate('/');
