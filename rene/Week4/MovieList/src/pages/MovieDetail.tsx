@@ -1,9 +1,8 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CastCard from "../components/CastCard";
 import GenreChip from "../components/GenreChip";
 import LoadingSpinner from "../components/LoadingSpinner";
+import useCustomFetch from "../hooks/useCustomFetch";
 import type {
 	CastMember,
 	CrewMember,
@@ -59,46 +58,25 @@ const MovieMeta = ({ voteAverage, releaseDate, runtime }: MovieMetaProps) => (
 );
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
-
-const HEADERS = { Authorization: `Bearer ${TMDB_API_KEY}` };
 
 const MovieDetailPage = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const [movie, setMovie] = useState<MovieDetail | null>(null);
-	const [credits, setCredits] = useState<MovieCredits | null>(null);
-	const [isPending, setIsPending] = useState(false);
-	const [isError, setIsError] = useState(false);
 
-	useEffect(() => {
-		const fetchAll = async () => {
-			setIsPending(true);
-			setIsError(false);
-			try {
-				const [movieRes, creditsRes] = await Promise.all([
-					axios.get<MovieDetail>(`${API_BASE_URL}/movie/${id}?language=en-US`, {
-						headers: HEADERS,
-					}),
-					axios.get<MovieCredits>(
-						`${API_BASE_URL}/movie/${id}/credits?language=en-US`,
-						{ headers: HEADERS },
-					),
-				]);
-				setMovie(movieRes.data);
-				setCredits(creditsRes.data);
-			} catch (error) {
-				console.error(error);
-				setIsError(true);
-			} finally {
-				setIsPending(false);
-			}
-		};
+	const { data: movie, isPending: moviePending, isError: movieError } =
+		useCustomFetch<MovieDetail>(
+			id ? `${API_BASE_URL}/movie/${id}?language=en-US` : "",
+		);
 
-		fetchAll();
-	}, [id]);
+	const { data: credits, isPending: creditsPending, isError: creditsError } =
+		useCustomFetch<MovieCredits>(
+			id ? `${API_BASE_URL}/movie/${id}/credits?language=en-US` : "",
+		);
+
+	const isPending = moviePending || creditsPending;
+	const isError = movieError || creditsError;
 
 	if (isPending)
 		return (
