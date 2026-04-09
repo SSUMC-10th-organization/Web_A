@@ -6,6 +6,8 @@ import { postSignin } from "../apis/auth";
 import type { ResponseSigninDto } from "../types/auth";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../constants/key";
+import FormInput from "../components/FormInput";
+import Button from "../components/Button";
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -71,50 +73,12 @@ const LoginPage = () => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          {/* 이메일 */}
-          <div>
-            <input
-              type="email"
-              placeholder="이메일"
-              {...register("email")}
-              className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-                errors.email
-                  ? "border-red-400 focus:border-red-400"
-                  : "border-gray-300 focus:border-pink-400"
-              }`}
-            />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
-            )}
-          </div>
+          <FormInput type="email" placeholder="이메일" {...register("email")} error={errors.email} />
+          <FormInput type="password" placeholder="비밀번호" {...register("password")} error={errors.password} />
 
-          {/* 비밀번호 */}
-          <div>
-            <input
-              type="password"
-              placeholder="비밀번호"
-              {...register("password")}
-              className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-                errors.password
-                  ? "border-red-400 focus:border-red-400"
-                  : "border-gray-300 focus:border-pink-400"
-              }`}
-            />
-            {errors.password && (
-              <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
-            )}
-          </div>
-
-          {/* 로그인 버튼 */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full mt-1 bg-gray-800 text-white py-3 rounded-md text-sm font-medium transition-colors
-              enabled:cursor-pointer enabled:hover:bg-pink-600
-              disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
+          <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "로그인 중..." : "로그인"}
-          </button>
+          </Button>
         </form>
       </div>
     </main>

@@ -9,6 +9,8 @@ import type { ResponseSignupDto } from "../types/auth";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../constants/key";
 import defaultProfile from "../assets/default_profile.svg";
+import FormInput from "../components/FormInput";
+import Button from "../components/Button";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -93,48 +95,12 @@ const SignupPage = () => {
           {/* STEP 1: 이름 + 이메일 */}
           {step === 1 && (
             <>
-              <div>
-                <input
-                  type="text"
-                  placeholder="이름"
-                  {...register("name")}
-                  className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-                    errors.name
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-300 focus:border-pink-400"
-                  }`}
-                />
-                {errors.name && (
-                  <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
-                )}
-              </div>
+              <FormInput type="text" placeholder="이름" {...register("name")} error={errors.name} />
+              <FormInput type="email" placeholder="이메일" {...register("email")} error={errors.email} />
 
-              <div>
-                <input
-                  type="email"
-                  placeholder="이메일"
-                  {...register("email")}
-                  className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-                    errors.email
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-300 focus:border-pink-400"
-                  }`}
-                />
-                {errors.email && (
-                  <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleNext(["name", "email"], 2)}
-                disabled={!isStep1Valid}
-                className="w-full mt-1 bg-gray-800 text-white py-3 rounded-md text-sm font-medium transition-colors
-                  enabled:cursor-pointer enabled:hover:bg-pink-600
-                  disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
+              <Button type="button" onClick={() => handleNext(["name", "email"], 2)} disabled={!isStep1Valid}>
                 다음
-              </button>
+              </Button>
             </>
           )}
 
@@ -145,48 +111,12 @@ const SignupPage = () => {
                 {getValues("email")}
               </div>
 
-              <div>
-                <input
-                  type="password"
-                  placeholder="비밀번호"
-                  {...register("password")}
-                  className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-                    errors.password
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-300 focus:border-pink-400"
-                  }`}
-                />
-                {errors.password && (
-                  <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
-                )}
-              </div>
+              <FormInput type="password" placeholder="비밀번호" {...register("password")} error={errors.password} />
+              <FormInput type="password" placeholder="비밀번호 확인" {...register("passwordCheck")} error={errors.passwordCheck} />
 
-              <div>
-                <input
-                  type="password"
-                  placeholder="비밀번호 확인"
-                  {...register("passwordCheck")}
-                  className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-                    errors.passwordCheck
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-300 focus:border-pink-400"
-                  }`}
-                />
-                {errors.passwordCheck && (
-                  <p className="mt-1 text-xs text-red-500">{errors.passwordCheck.message}</p>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleNext(["password", "passwordCheck"], 3)}
-                disabled={!isStep2Valid}
-                className="w-full mt-1 bg-gray-800 text-white py-3 rounded-md text-sm font-medium transition-colors
-                  enabled:cursor-pointer enabled:hover:bg-pink-600
-                  disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
+              <Button type="button" onClick={() => handleNext(["password", "passwordCheck"], 3)} disabled={!isStep2Valid}>
                 다음
-              </button>
+              </Button>
             </>
           )}
 
@@ -201,31 +131,11 @@ const SignupPage = () => {
                 />
               </div>
 
-              <div>
-                <input
-                  type="text"
-                  placeholder="닉네임을 입력해주세요!"
-                  {...register("nickname")}
-                  className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-                    errors.nickname
-                      ? "border-red-400 focus:border-red-400"
-                      : "border-gray-300 focus:border-pink-400"
-                  }`}
-                />
-                {errors.nickname && (
-                  <p className="mt-1 text-xs text-red-500">{errors.nickname.message}</p>
-                )}
-              </div>
+              <FormInput type="text" placeholder="닉네임을 입력해주세요!" {...register("nickname")} error={errors.nickname} />
 
-              <button
-                type="submit"
-                disabled={!isStep3Valid || isSubmitting}
-                className="w-full mt-1 bg-pink-500 text-white py-3 rounded-md text-sm font-medium transition-colors
-                  enabled:cursor-pointer enabled:hover:bg-pink-600
-                  disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
+              <Button type="submit" disabled={!isStep3Valid || isSubmitting}>
                 {isSubmitting ? "가입 중..." : "회원가입 완료"}
-              </button>
+              </Button>
             </>
           )}
         </form>
