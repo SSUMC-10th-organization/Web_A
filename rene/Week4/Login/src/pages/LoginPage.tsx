@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import useForm from "../hooks/useForm";
-import { validateLoginValues } from "../utils/validate";
-import type { LoginFormValues } from "../utils/validate";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signinSchema, type SigninFormValues } from "../schemas/signinSchema";
+import { postSignin } from "../apis/auth";
+import type { ResponseSigninDto } from "../types/auth";
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -12,27 +14,30 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const initialValues: LoginFormValues = {
-  email: "",
-  password: "",
-};
-
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const { values, errors, touched, getInputProps } = useForm({
-    initialValues,
-    validate: validateLoginValues,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SigninFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(signinSchema),
+    mode: "onBlur",
   });
 
-  // 폼이 유효한지 여부 (에러가 없으면 유효) (버튼 활성화 여부 결정)
-  const isFormValid = !errors?.email && !errors?.password;
-
-  const handleSubmit = () => {
-    if (!isFormValid) return;
-
-    // TODO: 로그인 API 호출
-    console.log("로그인 시도:", values);
+  const onSubmit: SubmitHandler<SigninFormValues> = async (data) => {
+    try {
+      const response: ResponseSigninDto = await postSignin(data);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof Error) alert(error.message);
+    }
   };
 
   return (
@@ -62,51 +67,52 @@ const LoginPage = () => {
           <hr className="flex-1 border-gray-300" />
         </div>
 
-        {/* 이메일 입력 */}
-        <div className="mb-3">
-          <input
-            type="email"
-            placeholder="이메일을 입력해주세요!"
-            {...getInputProps("email")}
-            className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-              touched?.email && errors?.email
-                ? "border-red-400 focus:border-red-400"
-                : "border-gray-300 focus:border-pink-400"
-            }`}
-          />
-          {touched?.email && errors?.email && (
-            <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-          )}
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          {/* 이메일 */}
+          <div>
+            <input
+              type="email"
+              placeholder="이메일"
+              {...register("email")}
+              className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
+                errors.email
+                  ? "border-red-400 focus:border-red-400"
+                  : "border-gray-300 focus:border-pink-400"
+              }`}
+            />
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+            )}
+          </div>
 
-        {/* 비밀번호 입력 */}
-        <div className="mb-4">
-          <input
-            type="password"
-            placeholder="비밀번호를 입력해주세요!"
-            {...getInputProps("password")}
-            className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
-              touched?.password && errors?.password
-                ? "border-red-400 focus:border-red-400"
-                : "border-gray-300 focus:border-pink-400"
-            }`}
-          />
-          {touched?.password && errors?.password && (
-            <p className="mt-1 text-xs text-red-500">{errors.password}</p>
-          )}
-        </div>
+          {/* 비밀번호 */}
+          <div>
+            <input
+              type="password"
+              placeholder="비밀번호"
+              {...register("password")}
+              className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
+                errors.password
+                  ? "border-red-400 focus:border-red-400"
+                  : "border-gray-300 focus:border-pink-400"
+              }`}
+            />
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
+            )}
+          </div>
 
-        {/* 로그인 버튼 */}
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={!isFormValid}
-          className="w-full bg-gray-800 text-white py-3 rounded-md text-sm font-medium transition-colors
-            enabled:cursor-pointer enabled:hover:bg-pink-600
-            disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
-          로그인
-        </button>
+          {/* 로그인 버튼 */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full mt-1 bg-gray-800 text-white py-3 rounded-md text-sm font-medium transition-colors
+              enabled:cursor-pointer enabled:hover:bg-pink-600
+              disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? "로그인 중..." : "로그인"}
+          </button>
+        </form>
       </div>
     </main>
   );
