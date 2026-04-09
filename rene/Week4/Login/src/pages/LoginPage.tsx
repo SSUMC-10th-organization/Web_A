@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signinSchema, type SigninFormValues } from "../schemas/signinSchema";
 import { postSignin } from "../apis/auth";
 import type { ResponseSigninDto } from "../types/auth";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { LOCAL_STORAGE_KEY } from "../constants/key";
 
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -16,6 +18,7 @@ const GoogleIcon = () => (
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { setItem } = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
 
   const {
     register,
@@ -33,7 +36,7 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<SigninFormValues> = async (data) => {
     try {
       const response: ResponseSigninDto = await postSignin(data);
-      localStorage.setItem("accessToken", response.data.accessToken);
+      setItem(response.data.accessToken);
       navigate("/");
     } catch (error) {
       if (error instanceof Error) alert(error.message);

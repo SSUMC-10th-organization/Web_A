@@ -4,43 +4,74 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "../schemas/signupSchema";
 import type { SignupFormValues } from "../schemas/signupSchema";
-import { postSignup } from "../apis/auth";
+import { postSignup, postSignin } from "../apis/auth";
 import type { ResponseSignupDto } from "../types/auth";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { LOCAL_STORAGE_KEY } from "../constants/key";
+import defaultProfile from "../assets/default_profile.svg";
 
 const SignupPage = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const { setItem } = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
 
   const {
     register,
     handleSubmit,
     trigger,
     getValues,
-    formState: { errors, isSubmitting, isValid },
+    watch,
+    formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>({
     defaultValues: {
       name: "",
       email: "",
       password: "",
       passwordCheck: "",
+      nickname: "",
     },
     resolver: zodResolver(signupSchema),
     mode: "onBlur",
   });
 
-  const handleNext = async () => {
-    const isStepValid = await trigger(["name", "email"]);
-    if (isStepValid) setStep(2);
+  const [watchedName, watchedEmail] = watch(["name", "email"]);
+  const isStep1Valid = !!watchedName && !!watchedEmail && !errors.name && !errors.email;
+
+  const watchedPassword = watch("password");
+  const watchedPasswordCheck = watch("passwordCheck");
+  const isStep2Valid =
+    !!watchedPassword &&
+    !!watchedPasswordCheck &&
+    !errors.password &&
+    !errors.passwordCheck;
+
+  const watchedNickname = watch("nickname");
+  const isStep3Valid = !!watchedNickname && !errors.nickname;
+
+  const handleNext = async (fields: (keyof SignupFormValues)[], nextStep: 1 | 2 | 3) => {
+    const isStepValid = await trigger(fields);
+    if (isStepValid) setStep(nextStep);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleBack = () => {
+    if (step === 3) setStep(2);
+    else if (step === 2) setStep(1);
+    else navigate(-1);
+  };
+
+
   const onSubmit: SubmitHandler<SignupFormValues> = async (data) => {
     const { passwordCheck, ...rest } = data;
+    try {
+      const response: ResponseSignupDto = await postSignup(rest);
+      console.log(response);
 
-    const response: ResponseSignupDto = await postSignup(rest);
-
-    console.log(response);
-    navigate("/login");
+      const signinResponse = await postSignin({ email: data.email, password: data.password });
+      setItem(signinResponse.data.accessToken);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof Error) alert(error.message);
+    }
   };
 
   return (
@@ -50,7 +81,7 @@ const SignupPage = () => {
         <div className="flex items-center mb-8 relative">
           <button
             type="button"
-            onClick={() => (step === 2 ? setStep(1) : navigate(-1))}
+            onClick={handleBack}
             className="text-gray-500 hover:text-gray-800 transition-colors text-xl absolute left-0"
           >
             ←
@@ -96,8 +127,8 @@ const SignupPage = () => {
 
               <button
                 type="button"
-                onClick={handleNext}
-                disabled={!isValid}
+                onClick={() => handleNext(["name", "email"], 2)}
+                disabled={!isStep1Valid}
                 className="w-full mt-1 bg-gray-800 text-white py-3 rounded-md text-sm font-medium transition-colors
                   enabled:cursor-pointer enabled:hover:bg-pink-600
                   disabled:bg-gray-300 disabled:cursor-not-allowed"
@@ -110,7 +141,6 @@ const SignupPage = () => {
           {/* STEP 2: 이메일 표시 + 비밀번호 */}
           {step === 2 && (
             <>
-              {/* 입력된 이메일 표시 */}
               <div className="w-full border border-gray-200 rounded-md px-4 py-3 text-sm text-gray-400 bg-gray-50">
                 {getValues("email")}
               </div>
@@ -148,13 +178,53 @@ const SignupPage = () => {
               </div>
 
               <button
-                type="submit"
-                disabled={!isValid || isSubmitting}
+                type="button"
+                onClick={() => handleNext(["password", "passwordCheck"], 3)}
+                disabled={!isStep2Valid}
                 className="w-full mt-1 bg-gray-800 text-white py-3 rounded-md text-sm font-medium transition-colors
                   enabled:cursor-pointer enabled:hover:bg-pink-600
                   disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "가입 중..." : "회원가입"}
+                다음
+              </button>
+            </>
+          )}
+
+          {/* STEP 3: 프로필 + 닉네임 */}
+          {step === 3 && (
+            <>
+              <div className="flex justify-center mb-2">
+                <img
+                  src={defaultProfile}
+                  alt="기본 프로필"
+                  className="w-50 h-50"
+                />
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  placeholder="닉네임을 입력해주세요!"
+                  {...register("nickname")}
+                  className={`w-full border rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 outline-none transition-colors ${
+                    errors.nickname
+                      ? "border-red-400 focus:border-red-400"
+                      : "border-gray-300 focus:border-pink-400"
+                  }`}
+                />
+                {errors.nickname && (
+                  <p className="mt-1 text-xs text-red-500">{errors.nickname.message}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={!isStep3Valid || isSubmitting}
+                className="w-full mt-1 bg-pink-500 text-white py-3 rounded-md text-sm font-medium transition-colors
+                  enabled:cursor-pointer enabled:hover:bg-pink-600
+                  disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? "가입 중..." : "회원가입 완료"}
               </button>
             </>
           )}
