@@ -1,35 +1,29 @@
 export type UserSigninInformation = {
-    email: string;
-    password : string;
+	email: string;
+	password: string;
 };
 
 function valudateUser(values: UserSigninInformation) {
-    const errors = {
-        email:"",
-        password:"",
-    };
+	const errors = {
+		email: "",
+		password: "",
+	};
 
-    if(
-        !/^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i.test(
-            values.email,
-        )
-    )
-        {
-            errors.email = "올바른 이메일 형식이 아닙니다.";
-        }
-    
+	if (!/^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i.test(values.email)) {
+		errors.email = "올바른 이메일 형식이 아닙니다.";
+	}
 
-    // 비밀번호 8-20자 사이
-    if (!(values.password.length >= 8 && values.password.length <=20)) {
-        errors.password = "비밀번호는 8-20자 이내로 입력해주세요.";
-    }
+	// 비밀번호 8-20자 사이
+	if (!(values.password.length >= 8 && values.password.length <= 20)) {
+		errors.password = "비밀번호는 8-20자 이내로 입력해주세요.";
+	}
 
-    return errors;
+	return errors;
 }
 
 // 로그인 유효성 검사
-function validateSignin(values : UserSigninInformation) {
-    return valudateUser(values);
+function validateSignin(values: UserSigninInformation) {
+	return valudateUser(values);
 }
 
-export {validateSignin};
+export { validateSignin };
