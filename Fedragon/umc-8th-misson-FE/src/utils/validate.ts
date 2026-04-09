@@ -1,6 +1,6 @@
 // src/utils/validate.ts
-export const validateLogin = (values: any) => {
-	const errors: any = {};
+export const validateLogin = (values: Record<string, string>) => {
+	const errors: Record<string, string> = {};
 
 	// 이메일 정규식: @와 .이 포함되어야 함
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

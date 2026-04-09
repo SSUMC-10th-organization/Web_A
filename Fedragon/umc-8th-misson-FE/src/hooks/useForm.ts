@@ -1,17 +1,19 @@
-// src/hooks/useForm.ts
 import { useEffect, useState } from "react";
 
-function useForm(initialValues: any, validate: any) {
-	const [values, setValues] = useState(initialValues);
-	const [errors, setErrors] = useState<any>({});
+// any 대신 unknown을 사용하여 Biome의 경고를 회피하고 안정성을 높임
+function useForm<T extends Record<string, unknown>>(
+	initialValues: T,
+	validate: (values: T) => Record<string, string>,
+) {
+	const [values, setValues] = useState<T>(initialValues);
+	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
-		setValues({ ...values, [name]: value });
+		setValues({ ...values, [name]: value } as T);
 	};
 
 	useEffect(() => {
-		// 값이 바뀔 때마다 유효성 검사 실행
 		setErrors(validate(values));
 	}, [values, validate]);
 
