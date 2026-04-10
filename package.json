@@ -1,5 +1,7 @@
 {
 	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
 		"check": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write .",
@@ -8,6 +10,17 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.7",
-		"typescript": "^5.9.3"
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
+		"typescript": "^5.9.3",
+		"vite": "^8.0.3"
+	},
+	"prisma": {
+		"seed": "pnpm ts-node prisma/seed.ts"
+	},
+	"dependencies": {
+		"react": "19",
+		"react-dom": "^19.2.4",
+		"vite": "^8.0.3"
 	}
 }
