@@ -1,31 +1,62 @@
 // pages/MoviePage.tsx
 
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import MovieCard from "../components/MovieCard";
-import { useCustomFetch } from "../hooks/useCustomFetch";
-import type { MovieResponse } from "../types/movie";
-
-const BASE = "https://api.themoviedb.org/3/movie";
+import type { Movie, MovieResponse } from "../types/movie";
 
 export default function MoviePage() {
-	const [page, setPage] = useState(1);
-	const { category } = useParams<{ category: string }>();
+	const [movies, setMovies] = useState<Movie[]>([]);
 
-	const { data, isPending, isError } = useCustomFetch<MovieResponse>(
-		`${BASE}/${category}?language=ko-KR&page=${page}`,
-	);
+	//1. 로딩 상태
+	const [isPending, setIsPending] = useState(false);
+
+	//2. 에러 상태
+	const [isError, setIsError] = useState(false);
+
+	//3. 페이지
+	const [page, setPage] = useState(1);
+
+	const { category } = useParams<{
+		category: string;
+	}>();
+
+	useEffect(() => {
+		const fetchMovies = async () => {
+			setIsPending(true);
+
+			try {
+				const { data } = await axios.get<MovieResponse>(
+					`https://api.themoviedb.org/3/movie/${category}?language=ko-KR&page=${page}`,
+					{
+						headers: {
+							Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
+						},
+					},
+				);
+
+				setMovies(data.results);
+			} catch {
+				setIsError(true);
+			} finally {
+				setIsPending(false);
+			}
+		};
+
+		fetchMovies();
+	}, [page, category]);
 
 	if (isError) {
 		return (
-			<div className="flex justify-center items-center mt-20">
-				<span className="text-red-500 text-2xl">
-					😥 영화 목록을 불러오는 데 실패했어요.
-				</span>
+			<div>
+				<span className="text-red-500 text-2xl">에러가 발생</span>
 			</div>
 		);
 	}
+
+	//console.log(movies[0]?.adult);
 
 	return (
 		<>
@@ -63,7 +94,7 @@ export default function MoviePage() {
 					className="p-10 grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4
                     lg:grid-cols-5 xl:grid-cols-6"
 				>
-					{data?.results.map((movie) => (
+					{movies.map((movie) => (
 						<MovieCard key={movie.id} movie={movie} />
 					))}
 				</div>

@@ -1,29 +1,42 @@
-// pages/MovieDetailPage.tsx
-
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCustomFetch } from "../hooks/useCustomFetch";
 import type { Credits, MovieDetail } from "../types/movie";
 
+const AUTH = {
+	headers: { Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}` },
+};
 const BASE = "https://api.themoviedb.org/3/movie";
 
 const MovieDetailPage = () => {
 	const { movieId } = useParams<{ movieId: string }>();
 	const navigate = useNavigate();
 
-	const {
-		data: movie,
-		isPending: isMoviePending,
-		isError: isMovieError,
-	} = useCustomFetch<MovieDetail>(`${BASE}/${movieId}?language=ko-KR`);
+	const [movie, setMovie] = useState<MovieDetail | null>(null);
+	const [credits, setCredits] = useState<Credits | null>(null);
+	const [isPending, setIsPending] = useState(false);
+	const [isError, setIsError] = useState(false);
 
-	const {
-		data: credits,
-		isPending: isCreditsPending,
-		isError: isCreditsError,
-	} = useCustomFetch<Credits>(`${BASE}/${movieId}/credits?language=ko-KR`);
+	useEffect(() => {
+		const fetchDetail = async () => {
+			setIsPending(true);
+			setIsError(false);
+			try {
+				const [{ data: movieData }, { data: creditsData }] = await Promise.all([
+					axios.get<MovieDetail>(`${BASE}/${movieId}?language=ko-KR`, AUTH),
+					axios.get<Credits>(`${BASE}/${movieId}/credits?language=ko-KR`, AUTH),
+				]);
+				setMovie(movieData);
+				setCredits(creditsData);
+			} catch {
+				setIsError(true);
+			} finally {
+				setIsPending(false);
+			}
+		};
 
-	const isPending = isMoviePending || isCreditsPending;
-	const isError = isMovieError || isCreditsError;
+		fetchDetail();
+	}, [movieId]);
 
 	if (isPending)
 		return (
@@ -34,16 +47,14 @@ const MovieDetailPage = () => {
 
 	if (isError || !movie)
 		return (
-			<div className="flex justify-center items-center mt-20">
-				<div className="text-red-500 text-center text-2xl">
-					😥 영화 정보를 불러오는 데 실패했어요. 잠시 후 다시 시도해주세요.
-				</div>
+			<div className="text-red-500 text-center text-2xl mt-20">
+				에러가 발생했습니다.
 			</div>
 		);
 
 	return (
-		<div className="text-white">
-			{/* 배경 + 기본 정보 */}
+		<div className="text-white ">
+			{/*배경 + 기본 정보*/}
 			<div
 				className="relative p-8 flex gap-6"
 				style={{
@@ -61,7 +72,9 @@ const MovieDetailPage = () => {
 					/>
 					<div className="flex flex-col justify-center gap-2">
 						<h1 className="text-3xl font-bold">{movie.title}</h1>
-						<p className="text-gray-300">평균 {movie.vote_average.toFixed(1)}</p>
+						<p className="text-gray-300">
+							평균 {movie.vote_average.toFixed(1)}
+						</p>
 						<p className="text-gray-300">{movie.release_date.slice(0, 4)}</p>
 						<p className="text-gray-300">{movie.runtime}분</p>
 						<div className="flex gap-2">
@@ -83,8 +96,7 @@ const MovieDetailPage = () => {
 					</div>
 				</div>
 			</div>
-
-			{/* 감독 + 배우 */}
+			{/*감독 + 배우*/}
 			<div className="p-8 bg-gray-900">
 				<h2 className="text-xl font-bold mb-4">감독/출연</h2>
 				<div className="flex gap-4 flex-wrap">
@@ -108,8 +120,7 @@ const MovieDetailPage = () => {
 					))}
 				</div>
 			</div>
-
-			{/* 뒤로가기 */}
+			{/*뒤로가기*/}
 			<div className="p-8 bg-gray-900 flex justify-start">
 				<button
 					type="button"

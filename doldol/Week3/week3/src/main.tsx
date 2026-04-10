@@ -1,8 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "./index.css";
 import App from "./App";
-import './index.css'
 
+// 수정 후 (더 안전한 방식)
 const container = document.getElementById("root");
 if (container) {
 	createRoot(container).render(
