@@ -1,2 +1,9 @@
+<<<<<<< doldol/#17_0
 node_modules/
 dist
+=======
+node_modules
+node_modules
+UMC-8th-BE/
+.env
+>>>>>>> doldol/main

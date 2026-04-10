@@ -1,4 +1,5 @@
 {
+<<<<<<< doldol/#17_0
   "name": "spa-history-api",
   "version": "1.0.0",
   "scripts": {
@@ -9,4 +10,30 @@
   "devDependencies": {
     "vite": "^5.2.0"
   }
+=======
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"check": "biome check .",
+		"fix": "biome check --write .",
+		"format": "biome format --write .",
+		"lint": "biome lint .",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.7",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
+		"typescript": "^5.9.3",
+		"vite": "^8.0.3"
+	},
+	"prisma": {
+		"seed": "pnpm ts-node prisma/seed.ts"
+	},
+	"dependencies": {
+		"react": "19",
+		"react-dom": "^19.2.4",
+		"vite": "^8.0.3"
+	}
+>>>>>>> doldol/main
 }
