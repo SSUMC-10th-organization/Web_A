@@ -1,45 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signinSchema, type SigninFormValues } from "../schemas/signinSchema";
-import { postSignin } from "../apis/auth";
-import type { ResponseSigninDto } from "../types/auth";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { LOCAL_STORAGE_KEY } from "../constants/key";
-
-// 컴포넌트
+import { useLoginForm } from "../hooks/useLoginForm";
 import FormInput from "../components/FormInput";
 import Button from "../components/Button";
-
-import googleLogo from "../assets/google_logo.png"; // 구글 로고 이미지
+import googleLogo from "../assets/google_logo.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { setItem } = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SigninFormValues>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-    resolver: zodResolver(signinSchema),
-    mode: "onBlur",
-  });
-
-  const onSubmit: SubmitHandler<SigninFormValues> = async (data) => {
-    try {
-      const response: ResponseSigninDto = await postSignin(data);
-      setItem(response.data.accessToken);
-      // 로그인 직후에 뒤로가기로 다시 로그인 페이지에 오는 걸 방지
-      navigate("/", { replace: true });
-    } catch (error) {
-      if (error instanceof Error) alert(error.message);
-    }
-  };
+  const { register, handleSubmit, errors, isSubmitting } = useLoginForm();
 
   return (
     <main className="min-h-screen bg-white flex items-center justify-center px-4">
@@ -69,10 +36,9 @@ const LoginPage = () => {
           <hr className="flex-1 border-gray-300" />
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <FormInput type="email" placeholder="이메일" {...register("email")} error={errors.email} />
           <FormInput type="password" placeholder="비밀번호" {...register("password")} error={errors.password} />
-
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "로그인 중..." : "로그인"}
           </Button>
