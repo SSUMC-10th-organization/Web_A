@@ -1,4 +1,16 @@
 {
+<<<<<<< doldol/#17_0
+  "name": "spa-history-api",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+=======
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
@@ -23,4 +35,5 @@
 		"react-dom": "^19.2.4",
 		"vite": "^8.0.3"
 	}
+>>>>>>> doldol/main
 }
