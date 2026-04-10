@@ -50,18 +50,19 @@ const SignupPage = () => {
   const watchedNickname = watch("nickname");
   const isStep3Valid = !!watchedNickname && !errors.nickname;
 
+  // 다음 버튼
   const handleNext = async (fields: (keyof SignupFormValues)[], nextStep: 1 | 2 | 3) => {
     const isStepValid = await trigger(fields);
     if (isStepValid) setStep(nextStep);
   };
-
+  // 뒤로가기 버튼
   const handleBack = () => {
     if (step === 3) setStep(2);
     else if (step === 2) setStep(1);
     else navigate(-1);
   };
 
-
+  // 제출 핸들러
   const onSubmit: SubmitHandler<SignupFormValues> = async (data) => {
     const { passwordCheck, ...rest } = data;
     try {
@@ -70,7 +71,7 @@ const SignupPage = () => {
 
       const signinResponse = await postSignin({ email: data.email, password: data.password });
       setItem(signinResponse.data.accessToken);
-      navigate("/");
+      navigate("/", { replace: true }); // 뒤로가기 방지
     } catch (error) {
       if (error instanceof Error) alert(error.message);
     }
@@ -83,6 +84,7 @@ const SignupPage = () => {
         <div className="flex items-center mb-8 relative">
           <button
             type="button"
+            aria-label="뒤로 가기"
             onClick={handleBack}
             className="text-gray-500 hover:text-gray-800 transition-colors text-xl absolute left-0"
           >
@@ -91,7 +93,11 @@ const SignupPage = () => {
           <h1 className="text-lg font-semibold text-gray-900 mx-auto">회원가입</h1>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form
+          onSubmit={handleSubmit(onSubmit)} // step 1, 2에서 Enter를 눌러도 폼 제출이 차단되게 설정
+          onKeyDown={(e) => { if (e.key === "Enter" && step !== 3) e.preventDefault(); }}
+          className="flex flex-col gap-3"
+        >
           {/* STEP 1: 이름 + 이메일 */}
           {step === 1 && (
             <>
