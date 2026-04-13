@@ -1,0 +1,34 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: black;
+  color: white;
+  font-family: sans-serif;
+  min-height: 100vh;
+}
+
+nav {
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: gray;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.nav-btn.active {
+  color: white;
+  text-decoration: underline;
+}
+
+main {
+  padding: 40px 20px;
+}
+
+.page { display: none; }
+.page.active { display: block; }

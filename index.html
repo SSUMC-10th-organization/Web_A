@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>History API SPA</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+  <nav>
+    <button class="nav-btn" data-path="/" onclick="navigate('/')">홈</button>
+    <button class="nav-btn" data-path="/about" onclick="navigate('/about')">소개</button>
+  </nav>
+
+  <main>
+    <div class="page" id="page-home">
+      <p>홈페이지입니다</p>
+    </div>
+
+    <div class="page" id="page-about">
+      <p>숭실대학교 AI 융합학부 21학번 최서정입니다.</p>
+    </div>
+  </main>
+
+  <!-- Vite는 JS 모듈을 type="module"로 불러와야 함 -->
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
