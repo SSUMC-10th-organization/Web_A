@@ -6,21 +6,21 @@
 		"fix": "biome check --write .",
 		"format": "biome format --write .",
 		"lint": "biome lint .",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.7",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
-		"typescript": "^5.9.3",
-		"vite": "^8.0.3"
-	},
-	"prisma": {
-		"seed": "pnpm ts-node prisma/seed.ts"
+		"typescript": "^5.9.3"
 	},
 	"dependencies": {
-		"react": "19",
-		"react-dom": "^19.2.4",
+		"axios": "^1.14.0",
+		"react": "^19.2.4",
+		"tailwindcss": "^4.2.2",
 		"vite": "^8.0.3"
 	}
 }
