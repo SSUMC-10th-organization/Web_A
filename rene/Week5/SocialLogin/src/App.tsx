@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import MyPage from "./pages/MyPage";
+import GoogleCallbackPage from "./pages/GoogleCallbackPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import PublicOnlyLayout from "./layouts/PublicOnlyLayout";
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
 		errorElement: <NotFoundPage />,
 		children: [
 			{ index: true, element: <HomePage /> },
+			{ path: "v1/auth/google/callback", element: <GoogleCallbackPage /> },
 			{
 				element: <PublicOnlyLayout />,
 				children: [

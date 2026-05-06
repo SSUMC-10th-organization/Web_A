@@ -8,6 +8,11 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, errors, isSubmitting } = useLoginForm();
 
+  // 구글 로그인 핸들러 - 백엔드의 구글 로그인 엔드포인트로 리다이렉트
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/v1/auth/google/login`;
+  }
+
   return (
     <main className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
@@ -24,8 +29,11 @@ const LoginPage = () => {
         </div>
 
         {/* 구글 로그인 */}
-        <button className="w-full flex items-center justify-center gap-3 cursor-pointer border border-gray-300 rounded-md py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors mb-4">
-          <img src={googleLogo} alt="Google" width={20} height={20} />
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 cursor-pointer border border-gray-300 rounded-md py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors mb-4"
+        >
+          <img src={googleLogo} alt="Google Logo Image" width={20} height={20} />
           구글 로그인
         </button>
 

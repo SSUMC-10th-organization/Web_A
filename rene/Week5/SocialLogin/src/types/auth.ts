@@ -32,6 +32,14 @@ export type ResponseSigninDto = CommonResponse<{
   refreshToken: string;
 }>;
 
+// 토큰 재발급 응답 타입
+export type ResponseRefreshDto = CommonResponse<{
+  id: number;
+  name: string;
+  accessToken: string;
+  refreshToken: string;
+}>;
+
 // 내 정보 요청 데이터 타입
 export type ResponseMyInfoDto = CommonResponse<{
   id: number;
