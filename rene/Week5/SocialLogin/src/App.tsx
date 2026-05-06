@@ -1,15 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import RootLayout from "./layout/root-layout";
+import RootLayout from "./layouts/root-layout";
 import NotFoundPage from "./pages/NotFoundPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import MyPage from "./pages/MyPage";
-
-// 1. 홈페이지
-// 2. 로그인 페이지
-// 3. 회원가입 페이지
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedLayout from "./layouts/ProtectedLayout";
+import PublicOnlyLayout from "./layouts/PublicOnlyLayout";
 
 const router = createBrowserRouter([
 	{
@@ -18,15 +17,29 @@ const router = createBrowserRouter([
 		errorElement: <NotFoundPage />,
 		children: [
 			{ index: true, element: <HomePage /> },
-			{ path: "/login", element: <LoginPage /> },
-			{ path: "/signup", element: <SignupPage /> },
-			{ path: "/mypage", element: <MyPage /> },
+			{
+				element: <PublicOnlyLayout />,
+				children: [
+					{ path: "login", element: <LoginPage /> },
+					{ path: "signup", element: <SignupPage /> },
+				],
+			},
+			{
+				element: <ProtectedLayout />,
+				children: [
+					{ path: "mypage", element: <MyPage /> },
+				],
+			},
 		],
 	},
 ]);
 
 function App() {
-	return <RouterProvider router={router} />;
+	return (
+		<AuthProvider>
+			<RouterProvider router={router} />
+		</AuthProvider>
+	);
 }
 
 export default App;

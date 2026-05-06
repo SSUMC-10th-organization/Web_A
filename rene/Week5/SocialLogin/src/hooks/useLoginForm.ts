@@ -1,14 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signinSchema, type SigninFormValues } from "../schemas/signinSchema";
-import { postSignin } from "../apis/auth";
-import { useLocalStorage } from "./useLocalStorage";
-import { LOCAL_STORAGE_KEY } from "../constants/key";
+import { useAuth } from "../context/AuthContext";
 
 export const useLoginForm = () => {
-  const navigate = useNavigate();
-  const { setItem } = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
+  const { login } = useAuth();
 
   const {
     register,
@@ -19,12 +15,10 @@ export const useLoginForm = () => {
     resolver: zodResolver(signinSchema),
     mode: "onBlur",
   });
-
+  
   const onSubmit: SubmitHandler<SigninFormValues> = async (data) => {
     try {
-      const response = await postSignin(data);
-      setItem(response.data.accessToken);
-      navigate("/", { replace: true });
+      await login(data);
     } catch (error) {
       if (error instanceof Error) alert(error.message);
     }
