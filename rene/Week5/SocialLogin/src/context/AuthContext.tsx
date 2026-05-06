@@ -9,7 +9,6 @@ interface AuthContextType {
   accessToken: string | null;
   refreshToken: string | null;
   login: (signInData: RequestSigninDto) => Promise<void>;
-  googleLoginWithTokens: (accessToken: string, refreshToken: string) => void;
   logout: () => Promise<void>;
 }
 
@@ -17,7 +16,6 @@ const AuthContext = createContext<AuthContextType>({
   accessToken: null,
   refreshToken: null,
   login: async () => {},
-  googleLoginWithTokens: () => {},
   logout: async () => {},
 }); // 초기화
 
@@ -58,14 +56,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // 구글 소셜 로그인 등 외부에서 토큰을 직접 받아 저장하는 함수
-  const googleLoginWithTokens = (newAccessToken: string, newRefreshToken: string) => {
-    accessTokenStorage.setItem(newAccessToken);
-    refreshTokenStorage.setItem(newRefreshToken);
-    setAccessToken(newAccessToken);
-    setRefreshToken(newRefreshToken);
-  };
-
   // 로그아웃 함수: 토큰 제거 및 상태 초기화
   const logout = async () => {
     try {
@@ -83,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Context Provider로 자식 컴포넌트 감싸기
   return (
-    <AuthContext.Provider value={{ accessToken, refreshToken, login, googleLoginWithTokens, logout }}>
+    <AuthContext.Provider value={{ accessToken, refreshToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

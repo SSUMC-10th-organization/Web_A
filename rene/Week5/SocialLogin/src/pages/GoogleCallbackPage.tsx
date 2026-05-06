@@ -1,8 +1,10 @@
 import { useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { LOCAL_STORAGE_KEY } from "../constants/key";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const GoogleCallbackPage = () => {
-  const { googleLoginWithTokens } = useAuth();
+  const accessTokenStorage = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
+  const refreshTokenStorage = useLocalStorage(LOCAL_STORAGE_KEY.refreshToken);
 
   useEffect(() => {
     // URL(쿼리 파라미터)
@@ -13,7 +15,8 @@ const GoogleCallbackPage = () => {
     const refreshToken = urlParams.get("refreshToken");
 
     if (accessToken && refreshToken) {
-      googleLoginWithTokens(accessToken, refreshToken);
+      accessTokenStorage.setItem(accessToken);
+      refreshTokenStorage.setItem(refreshToken);
       // 로그인 성공 후 마이페이지로 이동 (페이지 새로고침)
       window.location.href = "/mypage";
     } else {
