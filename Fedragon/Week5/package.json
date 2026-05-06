@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm typecheck && pnpm lint"
+    "check": "pnpm typecheck && pnpm lint",
+    "fix": "eslint . --ext ts,tsx --fix"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
