@@ -8,6 +8,7 @@ import { postSignin, postSignout } from "../apis/auth";
 interface AuthContextType {
   accessToken: string | null;
   refreshToken: string | null;
+  userName: string | null;
   login: (signInData: RequestSigninDto) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -15,6 +16,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   accessToken: null,
   refreshToken: null,
+  userName: null,
   login: async () => {},
   logout: async () => {},
 }); // 초기화
@@ -22,7 +24,8 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const accessTokenStorage = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
   const refreshTokenStorage = useLocalStorage(LOCAL_STORAGE_KEY.refreshToken);
-  
+  const userNameStorage = useLocalStorage(LOCAL_STORAGE_KEY.userName);
+
   // localStorage를 읽는 작업은 초기 상태 설정 시에만 수행하도록 useState 지연 초기화 사용
   const [accessToken, setAccessToken] = useState<string | null>(
     () => accessTokenStorage.getItem()
@@ -30,22 +33,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [refreshToken, setRefreshToken] = useState<string | null>(
     () => refreshTokenStorage.getItem()
   );
+  const [userName, setUserName] = useState<string | null>(
+    () => userNameStorage.getItem()
+  );
 
   // 로그인 함수: API 호출 후 토큰 저장 및 상태 업데이트
   const login = async (signInData: RequestSigninDto) => {
     try {
       // 비동기이니 try-catch로 에러 핸들링
       const {data} = await postSignin(signInData);
-        
+
       if (data){
         const newAccessToken = data.accessToken;
         const newRefreshToken = data.refreshToken;
+        const newUserName = data.name;
 
         accessTokenStorage.setItem(newAccessToken);
         refreshTokenStorage.setItem(newRefreshToken);
+        userNameStorage.setItem(newUserName);
 
         setAccessToken(newAccessToken);
         setRefreshToken(newRefreshToken);
+        setUserName(newUserName);
         alert("로그인에 성공했습니다!");
         window.location.href = "/mypage"; // 로그인 성공 후 마이페이지로 이동 (페이지 새로고침)
       }
@@ -62,8 +71,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await postSignout();
       accessTokenStorage.removeItem();
       refreshTokenStorage.removeItem();
+      userNameStorage.removeItem();
       setAccessToken(null);
       setRefreshToken(null);
+      setUserName(null);
       alert("로그아웃에 성공했습니다!");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -73,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Context Provider로 자식 컴포넌트 감싸기
   return (
-    <AuthContext.Provider value={{ accessToken, refreshToken, login, logout }}>
+    <AuthContext.Provider value={{ accessToken, refreshToken, userName, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

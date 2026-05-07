@@ -19,7 +19,7 @@ const SignupPage = () => {
   } = useSignupForm();
 
   return (
-    <main className="min-h-screen bg-white flex items-center justify-center px-4">
+    <main className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* 헤더 */}
         <div className="flex items-center mb-8 relative">
@@ -27,11 +27,11 @@ const SignupPage = () => {
             type="button"
             aria-label="뒤로 가기"
             onClick={handleBack}
-            className="text-gray-500 hover:text-gray-800 transition-colors text-xl absolute left-0"
+            className="text-gray-400 hover:text-white transition-colors text-xl absolute left-0"
           >
             ←
           </button>
-          <h1 className="text-lg font-semibold text-gray-900 mx-auto">회원가입</h1>
+          <h1 className="text-lg font-semibold text-white mx-auto">회원가입</h1>
         </div>
 
         <form
@@ -53,7 +53,7 @@ const SignupPage = () => {
           {/* STEP 2: 이메일 표시 + 비밀번호 */}
           {step === 2 && (
             <>
-              <div className="w-full border border-gray-200 rounded-md px-4 py-3 text-sm text-gray-400 bg-gray-50">
+              <div className="w-full border border-zinc-700 rounded-md px-4 py-3 text-sm text-zinc-500 bg-zinc-900">
                 {getValues("email")}
               </div>
               <FormInput type="password" placeholder="비밀번호" {...register("password")} error={errors.password} />

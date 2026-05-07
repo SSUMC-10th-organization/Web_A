@@ -14,24 +14,24 @@ const LoginPage = () => {
   }
 
   return (
-    <main className="min-h-screen bg-white flex items-center justify-center px-4">
+    <main className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* 헤더 */}
         <div className="flex items-center mb-8 relative">
           <button
             onClick={() => navigate(-1)}
             aria-label="뒤로 가기"
-            className="text-gray-500 hover:text-gray-800 transition-colors text-xl absolute left-0"
+            className="text-gray-400 hover:text-white transition-colors text-xl absolute left-0"
           >
             ←
           </button>
-          <h1 className="text-lg font-semibold text-gray-900 mx-auto">로그인</h1>
+          <h1 className="text-lg font-semibold text-white mx-auto">로그인</h1>
         </div>
 
         {/* 구글 로그인 */}
         <button
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 cursor-pointer border border-gray-300 rounded-md py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors mb-4"
+          className="w-full flex items-center justify-center gap-3 cursor-pointer border border-zinc-600 rounded-md py-3 text-sm text-gray-300 hover:bg-zinc-800 transition-colors mb-4"
         >
           <img src={googleLogo} alt="Google Logo Image" width={20} height={20} />
           구글 로그인
@@ -39,9 +39,9 @@ const LoginPage = () => {
 
         {/* OR 구분선 */}
         <div className="flex items-center gap-3 mb-4">
-          <hr className="flex-1 border-gray-300" />
-          <span className="text-xs text-gray-400">OR</span>
-          <hr className="flex-1 border-gray-300" />
+          <hr className="flex-1 border-zinc-700" />
+          <span className="text-xs text-zinc-500">OR</span>
+          <hr className="flex-1 border-zinc-700" />
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
