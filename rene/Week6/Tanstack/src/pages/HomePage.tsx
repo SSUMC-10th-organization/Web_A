@@ -3,6 +3,7 @@ import FloatingButton from "../components/FloatingButton";
 import LPGrid from "../components/LPCard/LPGrid";
 import LPCardSkeleton from "../components/LPCard/LPCardSkeleton";
 import ErrorFallback from "../components/ErrorFallback";
+import SortButtonGroup from "../components/SortButtonGroup";
 import { useInfiniteLPs } from "../hooks/queries/useInfiniteLPs";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import type { SortType } from "../apis/lp";
@@ -44,24 +45,15 @@ const HomePage = () => {
     <div className="relative min-h-full px-12">
       {/* 정렬 버튼 */}
       <div className="flex justify-end p-4">
-        <div className="flex rounded-lg border border-zinc-600 overflow-hidden">
-          <button
-            onClick={() => setSort("oldest")}
-            className={`px-4 py-1.5 text-sm font-medium transition-colors ${
-              sort === "oldest" ? "bg-white text-black" : "text-white hover:bg-zinc-800"
-            }`}
-          >
-            오래된순
-          </button>
-          <button
-            onClick={() => setSort("newest")}
-            className={`px-4 py-1.5 text-sm font-medium transition-colors ${
-              sort === "newest" ? "bg-white text-black" : "text-white hover:bg-zinc-800"
-            }`}
-          >
-            최신순
-          </button>
-        </div>
+        <SortButtonGroup
+          options={[
+            { value: "oldest", label: "오래된순" },
+            { value: "newest", label: "최신순" },
+          ]}
+          value={sort}
+          onChange={setSort}
+          size="large"
+        />
       </div>
 
       {/* 초기 로딩 스켈레톤 */}

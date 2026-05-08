@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
+import SortButtonGroup from "./SortButtonGroup";
 import defaultProfile from "../assets/default_profile.svg";
 import { useInfiniteComments } from "../hooks/queries/useInfiniteComments";
 import type { OrderType } from "../apis/lp";
@@ -106,24 +107,15 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
 
         {/* 정렬 버튼 */}
         <div className="flex items-center justify-end px-6 pb-3 flex-shrink-0">
-          <div className="flex rounded border border-zinc-700 overflow-hidden">
-            <button
-              onClick={() => setCommentOrder("asc")}
-              className={`px-3 py-1 text-xs transition-colors ${
-                commentOrder === "asc" ? "bg-white text-black" : "text-zinc-400 hover:bg-zinc-800"
-              }`}
-            >
-              오래된순
-            </button>
-            <button
-              onClick={() => setCommentOrder("desc")}
-              className={`px-3 py-1 text-xs transition-colors ${
-                commentOrder === "desc" ? "bg-white text-black" : "text-zinc-400 hover:bg-zinc-800"
-              }`}
-            >
-              최신순
-            </button>
-          </div>
+          <SortButtonGroup
+            options={[
+              { value: "asc", label: "오래된순" },
+              { value: "desc", label: "최신순" },
+            ]}
+            value={commentOrder}
+            onChange={setCommentOrder}
+            size="small"
+          />
         </div>
 
         {/* 댓글 목록 */}
