@@ -39,30 +39,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // 로그인 함수: API 호출 후 토큰 저장 및 상태 업데이트
   const login = async (signInData: RequestSigninDto) => {
-    try {
-      // 비동기이니 try-catch로 에러 핸들링
-      const {data} = await postSignin(signInData);
+    const { data } = await postSignin(signInData);
+    if (!data) throw new Error("로그인에 실패했습니다.");
 
-      if (data){
-        const newAccessToken = data.accessToken;
-        const newRefreshToken = data.refreshToken;
-        const newUserName = data.name;
-
-        accessTokenStorage.setItem(newAccessToken);
-        refreshTokenStorage.setItem(newRefreshToken);
-        userNameStorage.setItem(newUserName);
-
-        setAccessToken(newAccessToken);
-        setRefreshToken(newRefreshToken);
-        setUserName(newUserName);
-        alert("로그인에 성공했습니다!");
-        window.location.href = "/mypage"; // 로그인 성공 후 마이페이지로 이동 (페이지 새로고침)
-      }
-    } catch (error) {
-      // 나중에 toast 알림을 줘도 됨.
-      console.error("Login failed:", error);
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
-    }
+    accessTokenStorage.setItem(data.accessToken);
+    refreshTokenStorage.setItem(data.refreshToken);
+    userNameStorage.setItem(data.name);
+    setAccessToken(data.accessToken);
+    setRefreshToken(data.refreshToken);
+    setUserName(data.name);
   };
 
   // 로그아웃 함수: 토큰 제거 및 상태 초기화

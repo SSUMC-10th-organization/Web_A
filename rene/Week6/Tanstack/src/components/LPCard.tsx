@@ -1,13 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import type { LP } from "../types/lp";
-
-const getTimeAgo = (dateStr: string): string => {
-  const diffDays = Math.floor(
-    (Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24)
-  );
-  if (diffDays === 0) return "오늘";
-  if (diffDays === 1) return "1 days ago";
-  return `${diffDays} days ago`;
-};
+import { getTimeAgo } from "../utils/date";
 
 interface LPCardProps {
   lp: LP;
@@ -15,11 +8,12 @@ interface LPCardProps {
 
 const LPCard = ({ lp }: LPCardProps) => {
   const { title, thumbnail, createdAt, likes } = lp;
+  const navigate = useNavigate();
 
   return (
     <div
       className="relative group aspect-square cursor-pointer transition-transform duration-200 hover:scale-115 hover:z-10"
-      onClick={() => alert(`"${title}" 앨범이 클릭되었습니다!`)}
+      onClick={() => navigate(`/lps/${lp.id}`)}
     >
       <div className="absolute inset-0 overflow-hidden">
         <img src={thumbnail} alt={title} className="w-full h-full object-cover" />

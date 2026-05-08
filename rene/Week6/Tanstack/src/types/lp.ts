@@ -47,3 +47,22 @@ export type LPDetail = LP & {
 
 export type ResponseLPListDto = CommonResponse<LPListData>;
 export type ResponseLPDetailDto = CommonResponse<LPDetail>;
+
+// LP 댓글 정보
+export type LPComment = {
+  id: number;
+  content: string;
+  lpId: number;
+  authorId: number;
+  createdAt: string;
+  updatedAt: string;
+  author: LPAuthor;
+};
+
+export type CommentListData = {
+  data: LPComment[];
+  nextCursor: number | null;
+  hasNext: boolean;
+};
+
+export type ResponseCommentListDto = CommonResponse<CommentListData>;

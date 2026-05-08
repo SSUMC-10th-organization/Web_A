@@ -1,40 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import FloatingButton from "../components/FloatingButton";
 import LPGrid from "../components/LPGrid";
-import type { LP } from "../types/lp";
+import LPCardSkeleton from "../components/LPCardSkeleton";
+import ErrorFallback from "../components/ErrorFallback";
+import { useInfiniteLPs } from "../hooks/useInfiniteLPs";
+import type { SortType } from "../apis/lp";
 
-type SortType = "oldest" | "newest";
+// 스켈레톤 UI
+const SKELETON_COLS = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2";
 
-const MOCK_LPS: LP[] = [
-  { id: 1,  title: "Bill Evans - Portrait in Jazz",  content: "", thumbnail: "https://picsum.photos/seed/lp1/300/300",  published: true, authorId: 1, createdAt: "2024-01-15T00:00:00.000Z", updatedAt: "2024-01-15T00:00:00.000Z", tags: [], likes: [{id:1,userId:1,lpId:1},{id:2,userId:2,lpId:1},{id:3,userId:3,lpId:1},{id:4,userId:4,lpId:1},{id:5,userId:5,lpId:1}] },
-  { id: 2,  title: "Everybody Digs Bill Evans",       content: "", thumbnail: "https://picsum.photos/seed/lp2/300/300",  published: true, authorId: 1, createdAt: "2024-02-10T00:00:00.000Z", updatedAt: "2024-02-10T00:00:00.000Z", tags: [], likes: [{id:6,userId:1,lpId:2},{id:7,userId:2,lpId:2},{id:8,userId:3,lpId:2}] },
-  { id: 3,  title: "Dark Side Sessions",              content: "", thumbnail: "https://picsum.photos/seed/lp3/300/300",  published: true, authorId: 1, createdAt: "2024-03-05T00:00:00.000Z", updatedAt: "2024-03-05T00:00:00.000Z", tags: [], likes: Array.from({length:12},(_,i)=>({id:100+i,userId:i+1,lpId:3})) },
-  { id: 4,  title: "Hyukoh - 23",                    content: "", thumbnail: "https://picsum.photos/seed/lp4/300/300",  published: true, authorId: 1, createdAt: "2024-03-20T00:00:00.000Z", updatedAt: "2024-03-20T00:00:00.000Z", tags: [], likes: Array.from({length:7}, (_,i)=>({id:200+i,userId:i+1,lpId:4})) },
-  { id: 5,  title: "Colorful Chaos",                 content: "", thumbnail: "https://picsum.photos/seed/lp5/300/300",  published: true, authorId: 1, createdAt: "2024-04-01T00:00:00.000Z", updatedAt: "2024-04-01T00:00:00.000Z", tags: [], likes: Array.from({length:2}, (_,i)=>({id:300+i,userId:i+1,lpId:5})) },
-  { id: 6,  title: "Neon Dreams",                    content: "", thumbnail: "https://picsum.photos/seed/lp6/300/300",  published: true, authorId: 1, createdAt: "2024-04-15T00:00:00.000Z", updatedAt: "2024-04-15T00:00:00.000Z", tags: [], likes: Array.from({length:9}, (_,i)=>({id:400+i,userId:i+1,lpId:6})) },
-  { id: 7,  title: "Night Ride",                     content: "", thumbnail: "https://picsum.photos/seed/lp7/300/300",  published: true, authorId: 1, createdAt: "2024-04-28T00:00:00.000Z", updatedAt: "2024-04-28T00:00:00.000Z", tags: [], likes: Array.from({length:6}, (_,i)=>({id:500+i,userId:i+1,lpId:7})) },
-  { id: 8,  title: "Ed Sheeran - Divide",            content: "", thumbnail: "https://picsum.photos/seed/lp8/300/300",  published: true, authorId: 1, createdAt: "2024-05-03T00:00:00.000Z", updatedAt: "2024-05-03T00:00:00.000Z", tags: [], likes: Array.from({length:18},(_,i)=>({id:600+i,userId:i+1,lpId:8})) },
-  { id: 9,  title: "Warm Casio",                     content: "", thumbnail: "https://picsum.photos/seed/lp9/300/300",  published: true, authorId: 1, createdAt: "2024-05-14T00:00:00.000Z", updatedAt: "2024-05-14T00:00:00.000Z", tags: [], likes: Array.from({length:4}, (_,i)=>({id:700+i,userId:i+1,lpId:9})) },
-  { id: 10, title: "HONNE - Good Side / Bad Side",   content: "", thumbnail: "https://picsum.photos/seed/lp10/300/300", published: true, authorId: 1, createdAt: "2024-05-22T00:00:00.000Z", updatedAt: "2024-05-22T00:00:00.000Z", tags: [], likes: Array.from({length:11},(_,i)=>({id:800+i,userId:i+1,lpId:10})) },
-  { id: 11, title: "Animated Souls",                 content: "", thumbnail: "https://picsum.photos/seed/lp11/300/300", published: true, authorId: 1, createdAt: "2024-06-01T00:00:00.000Z", updatedAt: "2024-06-01T00:00:00.000Z", tags: [], likes: Array.from({length:8}, (_,i)=>({id:900+i,userId:i+1,lpId:11})) },
-  { id: 12, title: "Summer Road",                    content: "", thumbnail: "https://picsum.photos/seed/lp12/300/300", published: true, authorId: 1, createdAt: "2024-06-10T00:00:00.000Z", updatedAt: "2024-06-10T00:00:00.000Z", tags: [], likes: [] },
-  { id: 13, title: "Übermensch",                     content: "", thumbnail: "https://picsum.photos/seed/lp13/300/300", published: true, authorId: 1, createdAt: "2024-06-20T00:00:00.000Z", updatedAt: "2024-06-20T00:00:00.000Z", tags: [], likes: [] },
-  { id: 14, title: "Team Baby - Wedding",             content: "", thumbnail: "https://picsum.photos/seed/lp14/300/300", published: true, authorId: 1, createdAt: "2024-06-28T00:00:00.000Z", updatedAt: "2024-06-28T00:00:00.000Z", tags: [], likes: Array.from({length:3}, (_,i)=>({id:1000+i,userId:i+1,lpId:14})) },
-  { id: 15, title: "Ed Sheeran - X",                 content: "", thumbnail: "https://picsum.photos/seed/lp15/300/300", published: true, authorId: 1, createdAt: "2024-07-05T00:00:00.000Z", updatedAt: "2024-07-05T00:00:00.000Z", tags: [], likes: Array.from({length:15},(_,i)=>({id:1100+i,userId:i+1,lpId:15})) },
-  { id: 16, title: "Maroon 5 - Songs About Jane",    content: "", thumbnail: "https://picsum.photos/seed/lp16/300/300", published: true, authorId: 1, createdAt: "2024-07-12T00:00:00.000Z", updatedAt: "2024-07-12T00:00:00.000Z", tags: [], likes: Array.from({length:22},(_,i)=>({id:1200+i,userId:i+1,lpId:16})) },
-  { id: 17, title: "Infinity World",                 content: "", thumbnail: "https://picsum.photos/seed/lp17/300/300", published: true, authorId: 1, createdAt: "2024-07-18T00:00:00.000Z", updatedAt: "2024-07-18T00:00:00.000Z", tags: [], likes: [{id:1300,userId:1,lpId:17}] },
-  { id: 18, title: "Collector's Series",             content: "", thumbnail: "https://picsum.photos/seed/lp18/300/300", published: true, authorId: 1, createdAt: "2024-07-25T00:00:00.000Z", updatedAt: "2024-07-25T00:00:00.000Z", tags: [], likes: Array.from({length:7}, (_,i)=>({id:1400+i,userId:i+1,lpId:18})) },
-  { id: 19, title: "Midnight Jazz",                  content: "", thumbnail: "https://picsum.photos/seed/lp19/300/300", published: true, authorId: 1, createdAt: "2024-08-02T00:00:00.000Z", updatedAt: "2024-08-02T00:00:00.000Z", tags: [], likes: Array.from({length:9}, (_,i)=>({id:1500+i,userId:i+1,lpId:19})) },
-  { id: 20, title: "Golden Hours",                   content: "", thumbnail: "https://picsum.photos/seed/lp20/300/300", published: true, authorId: 1, createdAt: "2024-08-10T00:00:00.000Z", updatedAt: "2024-08-10T00:00:00.000Z", tags: [], likes: Array.from({length:4}, (_,i)=>({id:1600+i,userId:i+1,lpId:20})) },
-];
+const SkeletonGrid = ({ count }: { count: number }) => (
+  <div className={SKELETON_COLS}>
+    {Array.from({ length: count }).map((_, i) => (
+      <LPCardSkeleton key={i} />
+    ))}
+  </div>
+);
 
 const HomePage = () => {
   const [sort, setSort] = useState<SortType>("oldest");
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const sortedLps = [...MOCK_LPS].sort((a, b) => {
-    const diff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    return sort === "oldest" ? diff : -diff;
-  });
+  const {
+    data,
+    isPending,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteLPs(sort);
+
+  const lps = data?.pages.flatMap((page) => page.data) ?? [];
+
+  // Intersection Observer: sentinel이 보이면 다음 페이지 요청
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div className="relative min-h-full px-12">
@@ -60,10 +75,37 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* 앨범 그리드 */}
-      <LPGrid lps={sortedLps} />
-      
-      {/* 플로팅 + 버튼 */}
+      {/* 초기 로딩 스켈레톤 */}
+      {isPending && <SkeletonGrid count={18} />}
+
+      {/* 에러 */}
+      {isError && (
+        <ErrorFallback
+          message="LP 목록을 불러오지 못했습니다."
+          onRetry={refetch}
+        />
+      )}
+
+      {/* 목록 + 무한스크롤 */}
+      {!isPending && !isError && (
+        <>
+          <LPGrid lps={lps} />
+
+          {/* sentinel: 이 요소가 뷰포트에 들어오면 fetchNextPage 호출 */}
+          <div ref={sentinelRef} className="h-4" />
+
+          {/* 다음 페이지 로딩 스켈레톤 */}
+          {isFetchingNextPage && <SkeletonGrid count={6} />}
+
+          {/* 마지막 페이지 도달 */}
+          {!hasNextPage && lps.length > 0 && (
+            <p className="text-center text-zinc-600 text-xs py-8">
+              모든 LP를 불러왔습니다.
+            </p>
+          )}
+        </>
+      )}
+
       <FloatingButton />
     </div>
   );
