@@ -2,12 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { getMyInfo } from "../apis/auth";
 import type { ResponseMyInfoDto } from "../types/auth";
 import defaultProfile from "../assets/default_profile.svg";
-import { useAuth } from "../context/AuthContext";
 
 type MyInfo = ResponseMyInfoDto["data"];
 
 const MyPage = () => {
-  const { logout } = useAuth();
   const [myInfo, setMyInfo] = useState<MyInfo | null>(null);
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState<string | null>(null);

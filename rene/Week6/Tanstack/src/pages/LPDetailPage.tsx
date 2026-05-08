@@ -7,7 +7,7 @@ import trashIcon from "../assets/trash-icon.svg";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorFallback from "../components/ErrorFallback";
 import CommentSheet from "../components/CommentSheet";
-import { useLPDetail } from "../hooks/queries/useLPDetail";
+import { useGetLPDetail } from "../hooks/queries/useGetLPDetail";
 import { useRequireAuth } from "../hooks/useRequireAuth";
 import { getTimeAgo } from "../utils/date";
 import type { LPTag } from "../types/lp";
@@ -18,7 +18,7 @@ const LPDetailPage = () => {
   const { isAuthenticated } = useRequireAuth();
   const lpId = Number(id);
 
-  const { data: lp, isPending, isError, refetch } = useLPDetail(lpId, isAuthenticated);
+  const { data: lp, isPending, isError, refetch } = useGetLPDetail(lpId, isAuthenticated);
   const [liked, setLiked] = useState(false);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
 
@@ -160,7 +160,7 @@ const LPDetailPage = () => {
           <div>
             <p className="text-zinc-500 text-xs mb-3">태그</p>
             <div className="flex flex-wrap gap-x-4 gap-y-2">
-              {lp.tags?.map((tag: LPTag) => (
+              {lp.tags.map((tag) => (
                 <span key={tag.id} className="text-zinc-500 text-sm">
                   #{tag.name}
                 </span>
