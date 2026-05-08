@@ -1,4 +1,4 @@
-import type { LP } from "../types/lp";
+import type { LP } from "../../types/lp";
 import LPCard from "./LPCard";
 
 interface LPGridProps {

@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getComments, type OrderType } from "../apis/lp";
+import { getComments, type OrderType } from "../../apis/lp";
 
 export const useInfiniteComments = (lpId: number, order: OrderType, enabled = true) =>
   useInfiniteQuery({

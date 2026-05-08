@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import FloatingButton from "../components/FloatingButton";
-import LPGrid from "../components/LPGrid";
-import LPCardSkeleton from "../components/LPCardSkeleton";
+import LPGrid from "../components/LPCard/LPGrid";
+import LPCardSkeleton from "../components/LPCard/LPCardSkeleton";
 import ErrorFallback from "../components/ErrorFallback";
-import { useInfiniteLPs } from "../hooks/useInfiniteLPs";
+import { useInfiniteLPs } from "../hooks/queries/useInfiniteLPs";
 import type { SortType } from "../apis/lp";
 
 // 스켈레톤 UI

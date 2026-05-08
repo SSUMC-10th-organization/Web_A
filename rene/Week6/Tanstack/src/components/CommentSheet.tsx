@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import defaultProfile from "../assets/default_profile.svg";
-import { useInfiniteComments } from "../hooks/useInfiniteComments";
+import { useInfiniteComments } from "../hooks/queries/useInfiniteComments";
 import type { OrderType } from "../apis/lp";
 import { getTimeAgo } from "../utils/date";
 
@@ -15,7 +15,7 @@ const CommentSkeleton = () => (
   </div>
 );
 
-type Props = {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   lpId: number;

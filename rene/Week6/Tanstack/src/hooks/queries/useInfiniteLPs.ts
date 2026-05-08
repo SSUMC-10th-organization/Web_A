@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getLPs, type SortType } from "../apis/lp";
+import { getLPs, type SortType } from "../../apis/lp";
 
 export const useInfiniteLPs = (sort: SortType) =>
   useInfiniteQuery({

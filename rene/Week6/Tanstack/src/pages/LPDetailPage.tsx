@@ -7,9 +7,10 @@ import trashIcon from "../assets/trash-icon.svg";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorFallback from "../components/ErrorFallback";
 import CommentSheet from "../components/CommentSheet";
-import { useLPDetail } from "../hooks/useLPDetail";
+import { useLPDetail } from "../hooks/queries/useLPDetail";
 import { useRequireAuth } from "../hooks/useRequireAuth";
 import { getTimeAgo } from "../utils/date";
+import type { LPTag } from "../types/lp";
 
 const LPDetailPage = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const LPDetailPage = () => {
   });
 
   return (
-    <div className="flex h-full">
+    <div className="flex min-h-screen">
 
       {/* 좌측 패널 */}
       <div className="w-1/2 bg-zinc-950 flex flex-col px-10 py-8">
@@ -77,7 +78,7 @@ const LPDetailPage = () => {
         </div>
 
         {/* 바이닐 레코드 */}
-        <div className="flex items-center justify-center flex-1 py-6">
+        <div className="flex pt-30 justify-center flex-1 py-6">
           <div className="relative w-72 h-72">
             <div className="w-full h-full rounded-full overflow-hidden relative shadow-2xl animate-[spin_8s_linear_infinite]">
               <img
@@ -155,11 +156,11 @@ const LPDetailPage = () => {
 
         <hr className="border-zinc-800" />
 
-        {lp.tags.length > 0 && (
+        {lp.tags?.length > 0 && (
           <div>
             <p className="text-zinc-500 text-xs mb-3">태그</p>
             <div className="flex flex-wrap gap-x-4 gap-y-2">
-              {lp.tags.map((tag) => (
+              {lp.tags?.map((tag: LPTag) => (
                 <span key={tag.id} className="text-zinc-500 text-sm">
                   #{tag.name}
                 </span>
@@ -173,10 +174,14 @@ const LPDetailPage = () => {
           onClick={() => setIsCommentOpen(true)}
           className="flex items-center justify-between w-full text-left group py-1"
         >
-          <span className="text-zinc-400 text-sm group-hover:text-zinc-100 transition-colors">댓글</span>
+          <div className="flex items-center gap-3">
+            <span className="text-zinc-400 text-sm group-hover:text-zinc-100 transition-colors">댓글</span>
+            <span className="text-zinc-600 text-xs group-hover:text-zinc-400 transition-colors">더보기</span>
+            
+          </div>
           <img
             src={backIcon}
-            alt="chevron"
+            alt="댓글 더보기"
             className="w-4 h-4 rotate-180 opacity-50 group-hover:opacity-100 transition-opacity"
           />
         </button>

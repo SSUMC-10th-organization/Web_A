@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import type { LP } from "../types/lp";
-import { getTimeAgo } from "../utils/date";
+import type { LP } from "../../types/lp";
+import { getTimeAgo } from "../../utils/date";
 
 interface LPCardProps {
   lp: LP;

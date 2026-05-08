@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLPs, type SortType } from "../apis/lp";
+import { getLPs, type SortType } from "../../apis/lp";
 
 export const useLPs = (sort: SortType) =>
   useQuery({

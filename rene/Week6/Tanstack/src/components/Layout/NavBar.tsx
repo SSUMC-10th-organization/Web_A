@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import menuIcon from "../assets/menu-icon.svg";
 import searchIcon from "../assets/search-icon.svg";
 

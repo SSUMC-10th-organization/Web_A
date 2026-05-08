@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
 import { Outlet } from "react-router-dom";
-import NavBar from "../components/NavBar";
-import SideBar from "../components/SideBar";
-import Footer from "../components/Footer";
+import NavBar from "../components/Layout/NavBar";
+import SideBar from "../components/Layout/SideBar";
+import Footer from "../components/Layout/Footer";
 
 const RootLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
