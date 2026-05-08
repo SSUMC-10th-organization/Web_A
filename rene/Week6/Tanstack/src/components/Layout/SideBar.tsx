@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import searchIcon from "../assets/search-icon.svg";
-import personIcon from "../assets/person-icon.svg";
+import searchIcon from "../../assets/search-icon.svg";
+import personIcon from "../../assets/person-icon.svg";
 
 const SideBar = () => {
   const handleWithdraw = () => {

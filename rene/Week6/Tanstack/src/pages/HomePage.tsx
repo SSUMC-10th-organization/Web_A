@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import FloatingButton from "../components/FloatingButton";
 import LPGrid from "../components/LPCard/LPGrid";
 import LPCardSkeleton from "../components/LPCard/LPCardSkeleton";
 import ErrorFallback from "../components/ErrorFallback";
 import { useInfiniteLPs } from "../hooks/queries/useInfiniteLPs";
+import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import type { SortType } from "../apis/lp";
 
 // 스켈레톤 UI
@@ -33,23 +34,11 @@ const HomePage = () => {
 
   const lps = data?.pages.flatMap((page) => page.data) ?? [];
 
-  // Intersection Observer: sentinel이 보이면 다음 페이지 요청
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  useIntersectionObserver(
+    sentinelRef,
+    fetchNextPage,
+    hasNextPage && !isFetchingNextPage
+  );
 
   return (
     <div className="relative min-h-full px-12">

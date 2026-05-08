@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
+import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import defaultProfile from "../assets/default_profile.svg";
 import { useInfiniteComments } from "../hooks/queries/useInfiniteComments";
 import type { OrderType } from "../apis/lp";
@@ -36,23 +37,12 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
   const sheetScrollRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    const root = sheetScrollRef.current;
-    if (!sentinel || !root) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage && isOpen) {
-          fetchNextPage();
-        }
-      },
-      { root, threshold: 0.1 }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, isOpen]);
+  useIntersectionObserver(
+    sentinelRef,
+    fetchNextPage,
+    hasNextPage && !isFetchingNextPage && isOpen,
+    { rootRef: sheetScrollRef }
+  );
 
   const comments = commentData?.pages.flatMap((p) => p.data) ?? [];
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLPDetail } from "../apis/lp";
+import { getLPDetail } from "../../apis/lp";
 
 export const useLPDetail = (id: number, authenticated = true) =>
   useQuery({
