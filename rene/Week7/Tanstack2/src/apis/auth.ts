@@ -1,7 +1,8 @@
-import type { 
-  RequestSigninDto, RequestSignupDto, 
-  ResponseMyInfoDto, 
-  ResponseSigninDto, ResponseSignupDto 
+import type {
+  RequestSigninDto, RequestSignupDto,
+  RequestUpdateProfileDto,
+  ResponseMyInfoDto,
+  ResponseSigninDto, ResponseSignupDto
 } from "../types/auth";
 import { axiosInstance } from "./axios";
 
@@ -22,4 +23,15 @@ export const postSignout = async (): Promise<void> => {
 export const getMyInfo = async (): Promise<ResponseMyInfoDto> => {
   const { data } = await axiosInstance.get<ResponseMyInfoDto>("/v1/users/me");
   return data;
+};
+
+// 내 정보 수정
+export const patchMyInfo = async (body: RequestUpdateProfileDto): Promise<ResponseMyInfoDto> => {
+  const { data } = await axiosInstance.patch<ResponseMyInfoDto>("/v1/users", body);
+  return data;
+};
+
+// 회원 탈퇴
+export const deleteMyAccount = async (): Promise<void> => {
+  await axiosInstance.delete("/v1/users");
 };

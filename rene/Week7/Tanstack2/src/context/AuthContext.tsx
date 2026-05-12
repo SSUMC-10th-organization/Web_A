@@ -1,75 +1,62 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../constants/key";
-import type { RequestSigninDto } from "../types/auth";
-import { postSignin, postSignout } from "../apis/auth";
+import type { UserInfo } from "../types/auth";
 
-// Context 타입 정의
 interface AuthContextType {
   accessToken: string | null;
   refreshToken: string | null;
-  userName: string | null;
-  login: (signInData: RequestSigninDto) => Promise<void>;
-  logout: () => Promise<void>;
+  user: UserInfo | null;
+  setAuthState: (at: string | null, rt: string | null, user: UserInfo | null) => void;
+  updateUserInfo: (updates: Partial<UserInfo>) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   accessToken: null,
   refreshToken: null,
-  userName: null,
-  login: async () => {},
-  logout: async () => {},
-}); // 초기화
+  user: null,
+  setAuthState: () => {},
+  updateUserInfo: () => {},
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const accessTokenStorage = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);
   const refreshTokenStorage = useLocalStorage(LOCAL_STORAGE_KEY.refreshToken);
-  const userNameStorage = useLocalStorage(LOCAL_STORAGE_KEY.userName);
+  const userStorage = useLocalStorage(LOCAL_STORAGE_KEY.user);
 
-  // localStorage를 읽는 작업은 초기 상태 설정 시에만 수행하도록 useState 지연 초기화 사용
   const [accessToken, setAccessToken] = useState<string | null>(
     () => accessTokenStorage.getItem()
   );
   const [refreshToken, setRefreshToken] = useState<string | null>(
     () => refreshTokenStorage.getItem()
   );
-  const [userName, setUserName] = useState<string | null>(
-    () => userNameStorage.getItem()
-  );
+  const [user, setUser] = useState<UserInfo | null>(() => {
+    const raw = userStorage.getItem();
+    return raw ? (JSON.parse(raw) as UserInfo) : null;
+  });
 
-  // 로그인 함수: API 호출 후 토큰 저장 및 상태 업데이트
-  const login = async (signInData: RequestSigninDto) => {
-    const { data } = await postSignin(signInData);
-    if (!data) throw new Error("로그인에 실패했습니다.");
-
-    accessTokenStorage.setItem(data.accessToken);
-    refreshTokenStorage.setItem(data.refreshToken);
-    userNameStorage.setItem(data.name);
-    setAccessToken(data.accessToken);
-    setRefreshToken(data.refreshToken);
-    setUserName(data.name);
+  // 로그인/로그아웃 시 토큰과 사용자 정보를 저장소와 상태에 동시에 업데이트하는 함수
+  const setAuthState = (at: string | null, rt: string | null, newUser: UserInfo | null) => {
+    if (at) accessTokenStorage.setItem(at); else accessTokenStorage.removeItem();
+    if (rt) refreshTokenStorage.setItem(rt); else refreshTokenStorage.removeItem();
+    if (newUser) userStorage.setItem(JSON.stringify(newUser)); else userStorage.removeItem();
+    setAccessToken(at);
+    setRefreshToken(rt);
+    setUser(newUser);
   };
 
-  // 로그아웃 함수: 토큰 제거 및 상태 초기화
-  const logout = async () => {
-    try {
-      await postSignout();
-      accessTokenStorage.removeItem();
-      refreshTokenStorage.removeItem();
-      userNameStorage.removeItem();
-      setAccessToken(null);
-      setRefreshToken(null);
-      setUserName(null);
-      alert("로그아웃에 성공했습니다!");
-    } catch (error) {
-      console.error("Logout failed:", error);
-      alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
-    }
+  // 사용자 정보 업데이트 함수 (마이페이지에서 정보 수정 시 사용)
+  const updateUserInfo = (updates: Partial<UserInfo>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...updates };
+      userStorage.setItem(JSON.stringify(updated));
+      return updated;
+    });
   };
 
-  // Context Provider로 자식 컴포넌트 감싸기
   return (
-    <AuthContext.Provider value={{ accessToken, refreshToken, userName, login, logout }}>
+    <AuthContext.Provider value={{ accessToken, refreshToken, user, setAuthState, updateUserInfo }}>
       {children}
     </AuthContext.Provider>
   );

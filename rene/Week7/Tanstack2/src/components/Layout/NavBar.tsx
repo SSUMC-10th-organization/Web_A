@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useLogout } from "../../hooks/mutations/useLogout";
 import menuIcon from "../../assets/menu-icon.svg";
 import searchIcon from "../../assets/search-icon.svg";
 
@@ -9,11 +10,8 @@ interface NavBarProps {
 };
 
 const NavBar = ({ onMenuMouseEnter, onMenuMouseLeave }: NavBarProps) => {
-  const { accessToken, userName, logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout(); 
-  };
+  const { accessToken, user } = useAuth();
+  const { mutate: logout } = useLogout();
 
   return (
     <nav className="w-full bg-zinc-900 px-5 py-4 flex items-center justify-between border-b border-zinc-800 shrink-0">
@@ -33,9 +31,9 @@ const NavBar = ({ onMenuMouseEnter, onMenuMouseLeave }: NavBarProps) => {
 
         {accessToken ? (
           <>
-            <span className="text-white text-sm">{userName ?? ""}님 반갑습니다.</span>
+            <span className="text-white text-sm">{user?.name ?? ""}님 반갑습니다.</span>
             <button
-              onClick={handleLogout}
+              onClick={() => logout()}
               className="text-white text-sm hover:text-pink-400 transition-colors"
             >
               로그아웃

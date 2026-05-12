@@ -66,3 +66,12 @@ export type CommentListData = {
 };
 
 export type ResponseCommentListDto = CommonResponse<CommentListData>;
+
+export type CreateLPRequest = {
+  title: string;
+  content: string;
+  thumbnail: string;
+  tags: string[];
+  published: boolean;
+};
+

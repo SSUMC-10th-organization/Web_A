@@ -1,8 +1,7 @@
 import { axiosInstance } from "./axios";
-import type { ResponseLPListDto, ResponseLPDetailDto, ResponseCommentListDto } from "../types/lp";
+import type { ResponseLPListDto, ResponseLPDetailDto, CreateLPRequest } from "../types/lp";
 
 export type SortType = "oldest" | "newest";
-export type OrderType = "asc" | "desc";
 
 // LP 목록 조회
 export const getLPs = async (sort: SortType, cursor?: number, limit = 18): Promise<ResponseLPListDto> => {
@@ -18,16 +17,8 @@ export const getLPDetail = async (id: number): Promise<ResponseLPDetailDto> => {
   return data;
 };
 
-// LP 댓글 목록 조회
-export const getComments = async (
-  lpId: number,
-  order: OrderType,
-  cursor?: number,
-  limit = 10
-): Promise<ResponseCommentListDto> => {
-  const { data } = await axiosInstance.get<ResponseCommentListDto>(
-    `/v1/lps/${lpId}/comments`,
-    { params: { order, cursor, limit } }
-  );
+// LP 생성
+export const createLP = async (body: CreateLPRequest): Promise<ResponseLPDetailDto> => {
+  const { data } = await axiosInstance.post<ResponseLPDetailDto>("/v1/lps", body);
   return data;
 };

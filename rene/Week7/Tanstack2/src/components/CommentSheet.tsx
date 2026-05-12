@@ -3,7 +3,9 @@ import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import SortButtonGroup from "./SortButtonGroup";
 import defaultProfile from "../assets/default_profile.svg";
 import { useInfiniteComments } from "../hooks/queries/useInfiniteComments";
-import type { OrderType } from "../apis/lp";
+import { useCreateComment, useUpdateComment, useDeleteComment } from "../hooks/mutations/useCommentMutations";
+import { useAuth } from "../context/AuthContext";
+import type { OrderType } from "../apis/comment";
 import { getTimeAgo } from "../utils/date";
 
 const CommentSkeleton = () => (
@@ -21,11 +23,16 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   lpId: number;
-};
+}
 
 const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
+  const { user } = useAuth();
   const [commentOrder, setCommentOrder] = useState<OrderType>("asc");
   const [newComment, setNewComment] = useState("");
+  
+  const [menuOpenId, setMenuOpenId] = useState<number | null>(null); // 본인 댓글의 ••• 메뉴
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingContent, setEditingContent] = useState("");
 
   const {
     data: commentData,
@@ -34,6 +41,12 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteComments(lpId, commentOrder, true);
+
+  const { mutate: createComment, isPending: isCreating } = useCreateComment(lpId, () =>
+    setNewComment("")
+  );
+  const { mutate: updateComment, isPending: isUpdating } = useUpdateComment(lpId);
+  const { mutate: deleteComment } = useDeleteComment(lpId);
 
   const sheetScrollRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -46,6 +59,30 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
   );
 
   const comments = commentData?.pages.flatMap((p) => p.data) ?? [];
+
+  const handleSubmitComment = () => {
+    if (!newComment.trim()) return;
+    createComment(newComment.trim());
+  };
+
+  const handleStartEdit = (commentId: number, content: string) => {
+    setEditingId(commentId);
+    setEditingContent(content);
+    setMenuOpenId(null);
+  };
+
+  const handleConfirmEdit = (commentId: number) => {
+    if (!editingContent.trim()) return;
+    updateComment(
+      { commentId, content: editingContent.trim() },
+      { onSuccess: () => setEditingId(null) }
+    );
+  };
+
+  const handleDelete = (commentId: number) => {
+    deleteComment(commentId);
+    setMenuOpenId(null);
+  };
 
   return (
     <>
@@ -91,16 +128,20 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
             <input
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmitComment()}
               placeholder="댓글을 입력해주세요"
               className="flex-1 bg-transparent py-2.5 text-sm text-white placeholder-zinc-500 outline-none"
             />
             <button
+              onClick={handleSubmitComment}
+              disabled={!newComment.trim() || isCreating}
               className={`text-xs font-medium transition-colors flex-shrink-0 py-2.5 ${
-                newComment.trim() ? "text-pink-400 hover:text-pink-300" : "text-zinc-600"
+                newComment.trim() && !isCreating
+                  ? "text-pink-400 hover:text-pink-300"
+                  : "text-zinc-600"
               }`}
-              disabled={!newComment.trim()}
             >
-              작성
+              {isCreating ? "작성 중..." : "작성"}
             </button>
           </div>
         </div>
@@ -122,26 +163,92 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
         <div
           ref={sheetScrollRef}
           className="flex-1 overflow-y-auto px-6 pb-6 flex flex-col gap-4"
+          onClick={() => setMenuOpenId(null)}
         >
           {isCommentPending &&
             Array.from({ length: 3 }).map((_, i) => <CommentSkeleton key={i} />)}
 
-          {comments.map((comment) => (
-            <div key={comment.id} className="flex gap-3">
-              <img
-                src={comment.author.avatar ?? defaultProfile}
-                alt={comment.author.name}
-                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-white text-xs font-medium">{comment.author.name}</span>
-                  <span className="text-zinc-600 text-xs">{getTimeAgo(comment.createdAt)}</span>
+          {comments.map((comment) => {
+            const isOwn = comment.authorId === user?.id;
+            const isEditing = editingId === comment.id;
+
+            return (
+              <div key={comment.id} className="flex gap-3">
+                <img
+                  src={comment.author.avatar ?? defaultProfile}
+                  alt={comment.author.name}
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-white text-xs font-medium">{comment.author.name}</span>
+                    <span className="text-zinc-600 text-xs">{getTimeAgo(comment.createdAt)}</span>
+                  </div>
+
+                  {isEditing ? (
+                    <div className="flex items-center gap-2 mt-1">
+                      <input
+                        value={editingContent}
+                        onChange={(e) => setEditingContent(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleConfirmEdit(comment.id)}
+                        className="flex-1 bg-zinc-800 text-white text-sm px-3 py-1.5 rounded-lg outline-none border border-zinc-600 focus:border-pink-400"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => handleConfirmEdit(comment.id)}
+                        disabled={!editingContent.trim() || isUpdating}
+                        className="text-xs text-pink-400 hover:text-pink-300 disabled:text-zinc-600"
+                      >
+                        완료
+                      </button>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="text-xs text-zinc-500 hover:text-zinc-300"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-zinc-400 text-sm">{comment.content}</p>
+                  )}
                 </div>
-                <p className="text-zinc-400 text-sm">{comment.content}</p>
+
+                {/* 본인 댓글 ... 메뉴 */}
+                {isOwn && !isEditing && (
+                  <div className="relative flex-shrink-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuOpenId(menuOpenId === comment.id ? null : comment.id);
+                      }}
+                      className="text-zinc-500 hover:text-zinc-300 px-1"
+                    >
+                      •••
+                    </button>
+                    {menuOpenId === comment.id && (
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute right-0 top-6 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg z-10 overflow-hidden"
+                      >
+                        <button
+                          onClick={() => handleStartEdit(comment.id, comment.content)}
+                          className="block w-full text-left px-4 py-2 text-xs text-white hover:bg-zinc-700"
+                        >
+                          수정
+                        </button>
+                        <button
+                          onClick={() => handleDelete(comment.id)}
+                          className="block w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-zinc-700"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {isFetchingNextPage &&
             Array.from({ length: 2 }).map((_, i) => <CommentSkeleton key={`np-${i}`} />)}
