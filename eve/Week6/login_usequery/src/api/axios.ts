@@ -1,17 +1,13 @@
 import axios from 'axios';
-import type { InternalAxiosRequestConfig } from 'axios';
-
-interface CustomConfig extends InternalAxiosRequestConfig {
-  _retry?: boolean;
-}
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: 'http://localhost:8000', 
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-let refreshPromise: Promise<string> | null = null;
-
+// 요청 인터셉터
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token && config.headers) {
@@ -20,37 +16,27 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// 응답 인터셉터 (401 에러 시 토큰 재발급)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config as CustomConfig;
+    const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      if (refreshPromise) {
-        return refreshPromise.then(token => {
-          if (originalRequest.headers) originalRequest.headers.Authorization = `Bearer ${token}`;
-          return api(originalRequest);
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        const { data } = await axios.post('http://localhost:8000/v1/auth/token', {
+          refreshToken,
         });
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        return api(originalRequest);
+      } catch (err) {
+        localStorage.clear();
+        window.location.href = '/login';
+        return Promise.reject(err);
       }
-
-      refreshPromise = (async () => {
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          const { data } = await axios.post('http://localhost:8000/v1/auth/refresh', { refreshToken });
-          const newAccessToken = data.data.accessToken;
-          localStorage.setItem('accessToken', newAccessToken);
-          localStorage.setItem('refreshToken', data.data.refreshToken);
-          return newAccessToken;
-        } catch (err) {
-          localStorage.clear();
-          window.location.href = '/login';
-          throw err;
-        } finally { refreshPromise = null; }
-      })();
-
-      const token = await refreshPromise;
-      if (originalRequest.headers) originalRequest.headers.Authorization = `Bearer ${token}`;
-      return api(originalRequest);
     }
     return Promise.reject(error);
   }

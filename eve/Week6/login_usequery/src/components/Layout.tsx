@@ -1,63 +1,59 @@
-import { useState, useRef, useEffect } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Navbar from './navbar';
 
-const BurgerIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M7.95 11.95h32m-32 12h32m-32 12h32"/>
-  </svg>
-);
-
-export default function Layout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const { accessToken, nickname, logout } = useAuth();
+const Layout = () => {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="flex h-screen w-full flex-col bg-black text-white overflow-hidden">
-      <header className="flex h-16 w-full shrink-0 items-center justify-between border-b border-[#1a1a1a] bg-black px-8 z-[100] shadow-md">
-        <div className="flex items-center gap-4">
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="flex items-center justify-center h-10 w-10 text-gray-400 hover:text-white transition">
-            <BurgerIcon />
-          </button>
-          <Link to="/" className="text-2xl font-black text-pink-500 tracking-tighter">돌려돌려LP판</Link>
-        </div>
-
-        <div className="flex items-center gap-8">
-          <button className="text-gray-400 hover:text-white flex items-center"><span className="text-xl">🔍</span></button>
-          
-          <div className="flex items-center gap-6">
-            {accessToken ? (
-              <div className="flex items-center gap-5">
-                <span className="text-sm font-bold text-gray-300">{nickname}님 반갑습니다.</span>
-                <button onClick={logout} className="text-sm font-bold text-gray-500 hover:text-white transition">로그아웃</button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-5">
-                <Link to="/login" className="text-sm font-bold text-gray-400 hover:text-white transition">로그인</Link>
-                <Link to="/signup" className="rounded-lg bg-pink-500 px-5 py-2 text-sm font-bold text-white hover:bg-pink-600 transition shadow-lg shadow-pink-500/20">회원가입</Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
-      <div className="flex flex-1 overflow-hidden">
-        <aside ref={sidebarRef} className={`z-[90] flex shrink-0 flex-col justify-between border-r border-[#1a1a1a] bg-black p-8 transition-all duration-300 ${isSidebarOpen ? 'w-64 opacity-100' : 'w-0 p-0 opacity-0 overflow-hidden'}`}>
-          <nav className="space-y-10 mt-4">
-            <Link to="/lplist" className="flex items-center gap-4 text-xl font-bold text-gray-400 hover:text-white transition whitespace-nowrap">🔍 찾기</Link>
-            <Link to="/my" className="flex items-center gap-4 text-xl font-bold text-gray-400 hover:text-white transition whitespace-nowrap">👤 마이페이지</Link>
-          </nav>
-          <button className="text-left text-sm text-gray-800 hover:text-red-500 mb-4 px-2">탈퇴하기</button>
-        </aside>
-
-        <main className="flex-1 overflow-y-auto bg-black p-10 custom-scrollbar">
+    <LayoutWrapper>
+      <Navbar onMenuClick={toggleSidebar} /> 
+      <Body>
+        {isSidebarOpen && <Overlay onClick={toggleSidebar} />}
+        <Sidebar $isOpen={isSidebarOpen}>
+          <MenuSection>
+            <MenuItem onClick={() => { navigate('/'); setIsSidebarOpen(false); }}>🔍 찾기</MenuItem>
+            <MenuItem onClick={() => { navigate('/mypage'); setIsSidebarOpen(false); }}>👤 마이페이지</MenuItem>
+          </MenuSection>
+          <BottomSection>
+            <MenuItem onClick={() => alert("탈퇴하시겠습니까?")}>탈퇴하기</MenuItem>
+          </BottomSection>
+        </Sidebar>
+        <MainContent>
           <Outlet />
-        </main>
-      </div>
-
-      <button onClick={() => navigate('/write')} className="fixed bottom-10 right-10 z-[100] flex h-16 w-16 items-center justify-center rounded-full bg-pink-500 text-4xl font-black text-white shadow-2xl hover:scale-110 active:scale-95 transition shadow-pink-500/30">+</button>
-    </div>
+        </MainContent>
+      </Body>
+      <FloatingButton onClick={() => navigate('/add')}>+</FloatingButton>
+    </LayoutWrapper>
   );
-}
+};
+
+export default Layout;
+
+const LayoutWrapper = styled.div`display: flex; flex-direction: column; height: 100vh; background-color: #000; color: #fff;`;
+const Body = styled.div`display: flex; flex: 1; position: relative; overflow: hidden;`;
+const Sidebar = styled.aside<{ $isOpen: boolean }>`
+  width: 200px; background-color: #000; border-right: 1px solid #222;
+  display: flex; flex-direction: column; justify-content: space-between; padding: 25px;
+  transition: transform 0.3s ease; z-index: 1000;
+  @media (max-width: 768px) {
+    position: absolute; height: 100%; transform: ${({ $isOpen }) => ($isOpen ? 'translateX(0)' : 'translateX(-100%)')};
+  }
+`;
+const Overlay = styled.div`
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7); z-index: 999;
+`;
+const MainContent = styled.main`flex: 1; overflow-y: auto; padding: 20px;`;
+const MenuSection = styled.div`display: flex; flex-direction: column; gap: 20px;`;
+const BottomSection = styled.div`margin-top: auto;`;
+const MenuItem = styled.div`color: #fff; cursor: pointer; &:hover { color: #FF007F; }`;
+const FloatingButton = styled.button`
+  position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+  border-radius: 50%; background-color: #FF007F; color: #fff; border: none;
+  font-size: 30px; cursor: pointer; z-index: 1001;
+`;
