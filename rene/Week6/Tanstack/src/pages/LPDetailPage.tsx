@@ -18,7 +18,8 @@ const LPDetailPage = () => {
   const { isAuthenticated } = useRequireAuth();
   const lpId = Number(id);
 
-  const { data: lp, isPending, isError, refetch } = useGetLPDetail(lpId, isAuthenticated);
+  const { data: lp, isPending, isError, refetch } = useGetLPDetail(lpId, isAuthenticated); // 구조 분해 할당
+  // refetch는 에러 발생 시 재시도 버튼에 연결하기 위해 가져옴.
   const [liked, setLiked] = useState(false);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
 

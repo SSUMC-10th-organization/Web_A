@@ -14,7 +14,7 @@ export const getLPs = async (sort: SortType, cursor?: number, limit = 18): Promi
 
 // LP 상세 조회
 export const getLPDetail = async (id: number): Promise<ResponseLPDetailDto> => {
-  const { data } = await axiosInstance.get<ResponseLPDetailDto>(`/v1/lps/${id}`);
+  const { data } = await axiosInstance.get<ResponseLPDetailDto>(`/v1/lps/${id}`); // axios는 응답데이터를 자동으로 JSON으로 변환해서 data 객체에 담아줌.
   return data;
 };
 

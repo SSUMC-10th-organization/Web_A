@@ -13,16 +13,20 @@ export const useIntersectionObserver = (
 ) => {
   useEffect(() => {
     const el = sentinelRef.current;
-    if (!el || !enabled) return;
+    if (!el || !enabled) return; // 요소가 없거나 옵저버가 비활성화된 경우 관찰 중지
 
+    // 관찰자 생성
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) onIntersect();
+        // 센티넬 요소가 뷰포트에 들어오면 onIntersect 콜백 실행
+        if (entry.isIntersecting) onIntersect(); 
       },
       { root: rootRef?.current ?? null, threshold }
     );
 
+    // 센티넬 요소 관찰 시작
     observer.observe(el);
+    // 컴포넌트 언마운트 시 관찰자 해제
     return () => observer.disconnect();
   }, [enabled, onIntersect, threshold]);
 };

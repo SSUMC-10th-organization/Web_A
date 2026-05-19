@@ -2,6 +2,8 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 import { LOCAL_STORAGE_KEY } from "../constants/key";
 import type { ResponseRefreshDto } from "../types/auth";
 
+// Axios 인스턴스 생성
+// -> 기본 URL과 타임아웃, 인터셉터 등을 설정하여 재사용 가능한 HTTP 클라이언트로 활용
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 5000,

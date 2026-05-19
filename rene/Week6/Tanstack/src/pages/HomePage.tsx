@@ -21,7 +21,9 @@ const SkeletonGrid = ({ count }: { count: number }) => (
 
 const HomePage = () => {
   const [sort, setSort] = useState<SortType>("oldest");
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  
+  // 센티널 요소를 참조하기 위한 ref
+  const sentinelRef = useRef<HTMLDivElement>(null); 
 
   const {
     data,
