@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useLogout } from "../../hooks/mutations/useLogout";
+import { useSearchOverlay } from "../../context/SearchContext";
 import menuIcon from "../../assets/menu-icon.svg";
 import searchIcon from "../../assets/search-icon.svg";
 
@@ -12,6 +13,7 @@ interface NavBarProps {
 const NavBar = ({ onMenuMouseEnter, onMenuMouseLeave }: NavBarProps) => {
   const { accessToken, user } = useAuth();
   const { mutate: logout } = useLogout();
+  const { open: openSearch } = useSearchOverlay(); // 검색 오버레이 열기 함수
 
   return (
     <nav className="w-full bg-zinc-900 px-5 py-4 flex items-center justify-between border-b border-zinc-800 shrink-0">
@@ -25,7 +27,7 @@ const NavBar = ({ onMenuMouseEnter, onMenuMouseLeave }: NavBarProps) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="text-white">
+        <button onClick={openSearch} className="text-white hover:opacity-70 transition-opacity">
           <img src={searchIcon} alt="search" className="w-6 h-6" />
         </button>
 

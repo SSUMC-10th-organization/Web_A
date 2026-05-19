@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSearchOverlay } from "../../context/SearchContext";
 import searchIcon from "../../assets/search-icon.svg";
 import personIcon from "../../assets/person-icon.svg";
 import ConfirmModal from "../ConfirmModal";
@@ -8,18 +9,19 @@ import { useWithdraw } from "../../hooks/mutations/useWithdraw";
 const SideBar = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const { mutate: withdraw, isPending } = useWithdraw(() => setShowConfirm(false));
+  const { open: openSearch } = useSearchOverlay();
 
   return (
     <>
       <aside className="w-44 h-full bg-zinc-900 flex flex-col border-r border-zinc-800 shrink-0">
         <nav className="flex-1 flex flex-col pt-4">
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-6 py-3 text-white hover:bg-zinc-900 transition-colors"
+          <button
+            onClick={openSearch}
+            className="flex items-center gap-3 px-6 py-3 text-white hover:bg-zinc-800 transition-colors w-full text-left"
           >
             <img src={searchIcon} alt="search" className="w-4 h-4" />
             <span className="text-sm">찾기</span>
-          </Link>
+          </button>
 
           <Link
             to="/mypage"
