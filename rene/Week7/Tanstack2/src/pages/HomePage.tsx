@@ -4,6 +4,7 @@ import LPGrid from "../components/LPCard/LPGrid";
 import LPCardSkeleton from "../components/LPCard/LPCardSkeleton";
 import ErrorFallback from "../components/ErrorFallback";
 import SortButtonGroup from "../components/SortButtonGroup";
+import CreateLPModal from "../components/CreateLPModal";
 import { useInfiniteLPs } from "../hooks/queries/useInfiniteLPs";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import type { SortType } from "../apis/lp";
@@ -21,9 +22,8 @@ const SkeletonGrid = ({ count }: { count: number }) => (
 
 const HomePage = () => {
   const [sort, setSort] = useState<SortType>("oldest");
-  
-  // 센티널 요소를 참조하기 위한 ref
-  const sentinelRef = useRef<HTMLDivElement>(null); 
+  const [isModalOpen, setIsModalOpen] = useState(false); // CreateLPModal 열기/닫기 상태
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const {
     data,
@@ -89,7 +89,9 @@ const HomePage = () => {
         </>
       )}
 
-      <FloatingButton />
+      <FloatingButton onClick={() => setIsModalOpen(true)} />
+
+      {isModalOpen && <CreateLPModal onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 };

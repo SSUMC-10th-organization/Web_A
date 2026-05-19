@@ -9,8 +9,9 @@ import ErrorFallback from "../components/ErrorFallback";
 import CommentSheet from "../components/CommentSheet";
 import { useGetLPDetail } from "../hooks/queries/useGetLPDetail";
 import { useRequireAuth } from "../hooks/useRequireAuth";
+import { useToggleLike } from "../hooks/mutations/useToggleLike";
+import { useAuth } from "../context/AuthContext";
 import { getTimeAgo } from "../utils/date";
-import type { LPTag } from "../types/lp";
 
 const LPDetailPage = () => {
   const navigate = useNavigate();
@@ -18,9 +19,9 @@ const LPDetailPage = () => {
   const { isAuthenticated } = useRequireAuth();
   const lpId = Number(id);
 
-  const { data: lp, isPending, isError, refetch } = useGetLPDetail(lpId, isAuthenticated); // 구조 분해 할당
-  // refetch는 에러 발생 시 재시도 버튼에 연결하기 위해 가져옴.
-  const [liked, setLiked] = useState(false);
+  const { user } = useAuth();
+  const { data: lp, isPending, isError, refetch } = useGetLPDetail(lpId, isAuthenticated);
+  const { mutate: toggleLike } = useToggleLike(lpId); // 좋아요 토글 훅
   const [isCommentOpen, setIsCommentOpen] = useState(false);
 
   if (!isAuthenticated) return null;
@@ -68,14 +69,16 @@ const LPDetailPage = () => {
               <span className="text-zinc-500 text-xs">{getTimeAgo(lp.createdAt)}</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="opacity-50 hover:opacity-100 transition-opacity" title="수정">
-              <img src={editIcon} alt="edit" className="w-5 h-5" />
-            </button>
-            <button className="opacity-50 hover:opacity-100 transition-opacity" title="삭제">
-              <img src={trashIcon} alt="trash" className="w-5 h-5" />
-            </button>
-          </div>
+          {user?.id === lp.author.id && (
+            <div className="flex items-center gap-4">
+              <button className="opacity-50 hover:opacity-100 transition-opacity" title="수정">
+                <img src={editIcon} alt="edit" className="w-5 h-5" />
+              </button>
+              <button className="opacity-50 hover:opacity-100 transition-opacity" title="삭제">
+                <img src={trashIcon} alt="trash" className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 바이닐 레코드 */}
@@ -119,17 +122,23 @@ const LPDetailPage = () => {
           {lp.title}
         </h1>
 
+        {/* 작가 이름 + 좋아요 */}
         <div className="flex items-center justify-between">
           <span className="text-zinc-300 text-sm">{lp.author.name}</span>
-          <button
-            onClick={() => setLiked((prev) => !prev)}
-            className={`flex items-center gap-1.5 text-sm transition-colors ${
-              liked ? "text-pink-400" : "text-zinc-500 hover:text-zinc-300"
-            }`}
-          >
-            <span className="text-lg">{liked ? "♥" : "♡"}</span>
-            <span>{lp.likes.length + (liked ? 1 : 0)}</span>
-          </button>
+          {(() => {
+            const isLiked = lp.likes.some((l) => l.userId === user?.id);
+            return (
+              <button
+                onClick={() => toggleLike({ isLiked })}
+                className={`flex items-center gap-1.5 text-sm transition-colors ${
+                  isLiked ? "text-pink-400" : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                <span className="text-lg">{isLiked ? "♥" : "♡"}</span>
+                <span>{lp.likes.length}</span>
+              </button>
+            );
+          })()}
         </div>
 
         <hr className="border-zinc-800" />
