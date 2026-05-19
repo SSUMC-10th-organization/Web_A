@@ -69,14 +69,16 @@ const LPDetailPage = () => {
               <span className="text-zinc-500 text-xs">{getTimeAgo(lp.createdAt)}</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="opacity-50 hover:opacity-100 transition-opacity" title="수정">
-              <img src={editIcon} alt="edit" className="w-5 h-5" />
-            </button>
-            <button className="opacity-50 hover:opacity-100 transition-opacity" title="삭제">
-              <img src={trashIcon} alt="trash" className="w-5 h-5" />
-            </button>
-          </div>
+          {user?.id === lp.author.id && (
+            <div className="flex items-center gap-4">
+              <button className="opacity-50 hover:opacity-100 transition-opacity" title="수정">
+                <img src={editIcon} alt="edit" className="w-5 h-5" />
+              </button>
+              <button className="opacity-50 hover:opacity-100 transition-opacity" title="삭제">
+                <img src={trashIcon} alt="trash" className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 바이닐 레코드 */}
