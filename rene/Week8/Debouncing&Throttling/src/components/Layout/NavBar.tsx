@@ -1,25 +1,29 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useLogout } from "../../hooks/mutations/useLogout";
-import { useSearchOverlay } from "../../context/SearchContext";
-import menuIcon from "../../assets/menu-icon.svg";
-import searchIcon from "../../assets/search-icon.svg";
+import { searchIcon } from "../../assets";
+import MenuIcon from "./MenuIcon";
 
 interface NavBarProps {
   onMenuMouseEnter: () => void;
   onMenuMouseLeave: () => void;
+  isOpen: boolean;
 };
 
-const NavBar = ({ onMenuMouseEnter, onMenuMouseLeave }: NavBarProps) => {
+const NavBar = ({ onMenuMouseEnter, onMenuMouseLeave, isOpen }: NavBarProps) => {
   const { accessToken, user } = useAuth();
   const { mutate: logout } = useLogout();
-  const { open: openSearch } = useSearchOverlay(); // 검색 오버레이 열기 함수
+  const navigate = useNavigate();
 
   return (
     <nav className="w-full bg-zinc-900 px-5 py-4 flex items-center justify-between border-b border-zinc-800 shrink-0">
       <div className="flex items-center gap-4">
-        <button onMouseEnter={onMenuMouseEnter} onMouseLeave={onMenuMouseLeave} className="text-white">
-          <img src={menuIcon} alt="menu" className="w-5 h-5" />
+        <button
+          onMouseEnter={onMenuMouseEnter}
+          onMouseLeave={onMenuMouseLeave}
+          className="relative flex flex-col justify-between w-5 h-4 cursor-pointer"
+        >
+          <MenuIcon isOpen={isOpen} />
         </button>
         <Link to="/" className="text-pink-500 text-2xl font-bold tracking-tight">
           RENE LP
@@ -27,7 +31,7 @@ const NavBar = ({ onMenuMouseEnter, onMenuMouseLeave }: NavBarProps) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <button onClick={openSearch} className="text-white hover:opacity-70 transition-opacity">
+        <button onClick={() => navigate("/search")} className="text-white hover:opacity-70 transition-opacity">
           <img src={searchIcon} alt="search" className="w-6 h-6" />
         </button>
 
