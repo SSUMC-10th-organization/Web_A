@@ -7,13 +7,25 @@ import type {
 } from "../types/lp";
 import { axiosInstance } from "./axios";
 
-// LP 목록 조회
+// LP 목록 조회 (이름 검색 포함)
 export const getLpList = async (
 	paginationDto: PaginationDto,
 ): Promise<ResponseLpListDto> => {
 	const { data } = await axiosInstance.get("/v1/lps", {
 		params: paginationDto,
 	});
+	return data;
+};
+
+// LP 태그 검색 
+export const getLpsByTag = async (
+	tagName: string,
+	paginationDto: PaginationDto,
+): Promise<ResponseLpListDto> => {
+	const { data } = await axiosInstance.get(
+		`/v1/lps/tag/${encodeURIComponent(tagName)}`,
+		{ params: paginationDto },
+	);
 	return data;
 };
 
@@ -25,7 +37,7 @@ export const getLpDetail = async (
 	return data;
 };
 
-// LP 생성 - tags: string[], thumbnail: imageUrl
+// LP 생성
 export const postLp = async (body: RequestCreateLpDto) => {
 	const { data } = await axiosInstance.post("/v1/lps", body);
 	return data;

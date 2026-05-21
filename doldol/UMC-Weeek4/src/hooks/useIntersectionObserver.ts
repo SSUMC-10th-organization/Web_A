@@ -7,9 +7,10 @@ interface UseIntersectionObserverProps {
 	threshold?: number;
 }
 
-/**
- * 관찰 대상 요소가 뷰포트에 들어오면 onIntersect 콜백을 호출.
- * 반환된 ref 를 트리거로 쓸 빈 div 에 달면 됨.
+/*
+ * onIntersect 를 ref 에 저장 → Observer 는 enabled/rootMargin/threshold 가
+ * 바뀔 때만 재구독. 콜백이 바뀌어도 Observer 가 disconnect/reconnect 되지 않으므로
+ * 재구독 시 즉시 재발동하는 문제가 없음 → useThrottle 이 정상 동작.
  */
 function useIntersectionObserver<T extends HTMLElement = HTMLDivElement>({
 	onIntersect,
@@ -18,6 +19,12 @@ function useIntersectionObserver<T extends HTMLElement = HTMLDivElement>({
 	threshold = 0,
 }: UseIntersectionObserverProps) {
 	const targetRef = useRef<T | null>(null);
+
+	// 콜백은 ref 로 보관 → 최신 함수를 참조하되 Observer 재구독은 하지 않음
+	const onIntersectRef = useRef(onIntersect);
+	useEffect(() => {
+		onIntersectRef.current = onIntersect;
+	}, [onIntersect]);
 
 	useEffect(() => {
 		if (!enabled) return;
@@ -28,7 +35,8 @@ function useIntersectionObserver<T extends HTMLElement = HTMLDivElement>({
 			(entries) => {
 				for (const entry of entries) {
 					if (entry.isIntersecting) {
-						onIntersect();
+						// ref 를 통해 항상 최신 콜백 호출
+						onIntersectRef.current();
 					}
 				}
 			},
@@ -37,7 +45,8 @@ function useIntersectionObserver<T extends HTMLElement = HTMLDivElement>({
 
 		observer.observe(target);
 		return () => observer.disconnect();
-	}, [onIntersect, enabled, rootMargin, threshold]);
+		// onIntersect 는 의존성에서 제거 → 콜백 변경 시 재구독 없음
+	}, [enabled, rootMargin, threshold]);
 
 	return targetRef;
 }

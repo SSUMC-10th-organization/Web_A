@@ -14,19 +14,23 @@ function useGetInfiniteLpList({
 	search,
 	order,
 }: UseGetInfiniteLpListParams = {}) {
+	// 빈 문자열은 허용, 공백만 있는 경우는 요청 차단
+	const isEnabled = search === undefined || search === "" || search.trim().length > 0;
+
 	return useInfiniteQuery({
-		// 정렬이 바뀌면 새로 첫 페이지부터 불러옴
+		// debouncedQuery(search) 가 queryKey 에 포함 → 변경 시 첫 페이지부터 재요청
 		queryKey: [QUERY_KEY.lps, search, order],
 		queryFn: ({ pageParam }) =>
 			getLpList({
 				cursor: pageParam as number | undefined,
 				limit,
-				search,
+				search: search?.trim() || undefined,
 				order,
 			}),
 		initialPageParam: undefined as number | undefined,
 		getNextPageParam: (lastPage) =>
 			lastPage.data.hasNext ? lastPage.data.nextCursor : undefined,
+		enabled: isEnabled,
 		staleTime: 1000 * 60 * 5,
 		gcTime: 1000 * 60 * 10,
 	});
