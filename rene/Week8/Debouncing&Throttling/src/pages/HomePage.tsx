@@ -1,13 +1,14 @@
 import { useState, useRef } from "react";
-import FloatingButton from "../components/FloatingButton";
+import FloatingButton from "../components/Layout/FloatingButton";
 import LPGrid from "../components/LPCard/LPGrid";
 import LPCardSkeleton from "../components/LPCard/LPCardSkeleton";
-import ErrorFallback from "../components/ErrorFallback";
-import SortButtonGroup from "../components/SortButtonGroup";
-import CreateLPModal from "../components/CreateLPModal";
+import ErrorFallback from "../components/common/ErrorFallback";
+import SortButtonGroup from "../components/common/SortButtonGroup";
+import CreateLPModal from "../components/modals/CreateLPModal";
 import { useInfiniteLPs } from "../hooks/queries/useInfiniteLPs";
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
-import type { SortType } from "../apis/lp";
+import { useIntersectionObserver } from "../hooks/utils/useIntersectionObserver";
+import type { OrderType } from "../apis/lp";
+import { useThrottle } from "../hooks/utils/useThrottle";
 
 // 스켈레톤 UI
 const SKELETON_COLS = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2";
@@ -21,7 +22,7 @@ const SkeletonGrid = ({ count }: { count: number }) => (
 );
 
 const HomePage = () => {
-  const [sort, setSort] = useState<SortType>("oldest");
+  const [sort, setSort] = useState<OrderType>("asc");
   const [isModalOpen, setIsModalOpen] = useState(false); // CreateLPModal 열기/닫기 상태
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -37,9 +38,12 @@ const HomePage = () => {
 
   const lps = data?.pages.flatMap((page) => page.data) ?? [];
 
+  const throttledFetchNextPage = useThrottle(fetchNextPage, 1000*3 );
+
+  // 스크롤 → sentinel 감지 → fetchNextPage 순으로 무한 스크롤
   useIntersectionObserver(
     sentinelRef,
-    fetchNextPage,
+    throttledFetchNextPage,
     hasNextPage && !isFetchingNextPage
   );
 
@@ -49,8 +53,8 @@ const HomePage = () => {
       <div className="flex justify-end p-4">
         <SortButtonGroup
           options={[
-            { value: "oldest", label: "오래된순" },
-            { value: "newest", label: "최신순" },
+            { value: "asc", label: "오래된순" },
+            { value: "desc", label: "최신순" },
           ]}
           value={sort}
           onChange={setSort}
