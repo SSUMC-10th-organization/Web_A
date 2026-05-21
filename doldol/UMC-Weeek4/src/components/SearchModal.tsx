@@ -60,14 +60,16 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
 	const result = searchType === "name" ? nameResult : tagResult;
 	const lps = hasQuery ? (result.data?.pages.flatMap((p) => p.data.data) ?? []) : [];
 
-	useEffect(() => {
-		if (isOpen) {
-			setInput("");
-			setSearchType("name");
-			setRecentSearches(getRecentSearches());
-			setTimeout(() => inputRef.current?.focus(), 50);
-		}
-	}, [isOpen]);
+    useEffect(() => {
+        if (isOpen) {
+            setTimeout(() => {
+                setInput("");
+                setSearchType("name");
+                setRecentSearches(getRecentSearches());
+                inputRef.current?.focus();
+            }, 50);
+        }
+    }, [isOpen]);
 
 	if (!isOpen) return null;
 
