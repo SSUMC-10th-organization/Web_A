@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getMyInfo } from "../apis/auth";
+import useMyInfo from "../hooks/queries/useMyInfo";
 
 interface NavbarProps {
 	onToggleSidebar: () => void;
@@ -10,37 +10,17 @@ interface NavbarProps {
 const Navbar = ({ onToggleSidebar }: NavbarProps) => {
 	const { accessToken, logout } = useAuth();
 	const navigate = useNavigate();
-	const [name, setName] = useState<string>("");
+	const { data: myInfo } = useMyInfo();
 
-	// 로그인 상태면 내 정보(닉네임)를 가져와 환영 문구에 사용
-	useEffect(() => {
-		if (!accessToken) {
-			return;
-		}
-		let active = true;
-		getMyInfo()
-			.then((res) => {
-				if (active) setName(res.data.name);
-			})
-			.catch(() => {
-				if (active) setName("");
-			});
-		return () => {
-			active = false;
-		};
-	}, [accessToken]);
-
-    const displayName = accessToken ? name : "";
-
-	const handleLogout = async () => {
-		await logout();
-		navigate("/");
-	};
+	const { mutate: handleLogout, isPending } = useMutation({
+		mutationFn: logout,
+		onSuccess: () => navigate("/"),
+		onError: () => alert("로그아웃 중 오류가 발생했습니다."),
+	});
 
 	return (
 		<header className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-between bg-black px-4 border-b border-gray-800">
 			<div className="flex items-center gap-3">
-				{/* 버거 버튼 - 사이드바 토글 */}
 				<button
 					type="button"
 					aria-label="메뉴 열기"
@@ -64,7 +44,7 @@ const Navbar = ({ onToggleSidebar }: NavbarProps) => {
 					</svg>
 				</button>
 				<Link to="/" className="text-xl font-extrabold text-pink-500">
-					DolDol LP판
+					DOLDOLP
 				</Link>
 			</div>
 
@@ -92,12 +72,15 @@ const Navbar = ({ onToggleSidebar }: NavbarProps) => {
 				{accessToken ? (
 					<>
 						<span className="text-sm text-gray-200">
-							{displayName ? `${displayName}님 반갑습니다.` : "반갑습니다."}
+							{myInfo?.name
+								? `${myInfo.name}님 반갑습니다.`
+								: "반갑습니다."}
 						</span>
 						<button
 							type="button"
-							onClick={handleLogout}
-							className="text-sm text-gray-300 hover:text-white transition-colors"
+							onClick={() => handleLogout()}
+							disabled={isPending}
+							className="text-sm text-gray-300 hover:text-white transition-colors disabled:opacity-50"
 						>
 							로그아웃
 						</button>

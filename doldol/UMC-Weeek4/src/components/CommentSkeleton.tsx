@@ -14,7 +14,6 @@ export const CommentListSkeleton = ({ count = 5 }: { count?: number }) => {
 	return (
 		<div>
 			{Array.from({ length: count }).map((_, i) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders
 				<CommentSkeleton key={i} />
 			))}
 		</div>

@@ -1,15 +1,7 @@
 import type { CommonResponse, CursorBasedResponse } from "./common";
 
-export type Tag = {
-	id: number;
-	name: string;
-};
-
-export type Likes = {
-	id: number;
-	userId: number;
-	lpId: number;
-};
+export type Tag = { id: number; name: string };
+export type Likes = { id: number; userId: number; lpId: number };
 
 export type Lp = {
 	id: number;
@@ -24,14 +16,6 @@ export type Lp = {
 	likes: Likes[];
 };
 
-// GET /v1/lps  (목록)
-export type ResponseLpListDto = CursorBasedResponse<{
-	data: Lp[];
-	nextCursor: number;
-	hasNext: boolean;
-}>;
-
-// GET /v1/lps/{lpId}  (상세) - author 가 추가됨
 export type Author = {
 	id: number;
 	name: string;
@@ -42,8 +26,20 @@ export type Author = {
 	updatedAt: Date;
 };
 
-export type ResponseLpDetailDto = CommonResponse<
-	Lp & {
-		author: Author;
-	}
->;
+export type ResponseLpListDto = CursorBasedResponse<{
+	data: Lp[];
+	nextCursor: number;
+	hasNext: boolean;
+}>;
+
+export type ResponseLpDetailDto = CommonResponse<Lp & { author: Author }>;
+
+export type RequestCreateLpDto = {
+	title: string;
+	content: string;
+	thumbnail: string; // imageUrl from /v1/uploads
+	tags: string[];
+	published: boolean;
+};
+
+export type RequestUpdateLpDto = Partial<RequestCreateLpDto>;

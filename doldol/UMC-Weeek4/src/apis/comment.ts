@@ -28,3 +28,24 @@ export const postComment = async (
 	);
 	return data;
 };
+
+// 댓글 수정
+export const patchComment = async (
+	lpId: number,
+	commentId: number,
+	body: { content: string },
+) => {
+	const { data } = await axiosInstance.patch(
+		`/v1/lps/${lpId}/comments/${commentId}`,
+		body,
+	);
+	return data;
+};
+
+// 댓글 삭제
+export const deleteComment = async (lpId: number, commentId: number) => {
+	const { data } = await axiosInstance.delete(
+		`/v1/lps/${lpId}/comments/${commentId}`,
+	);
+	return data;
+};
