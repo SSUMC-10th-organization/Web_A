@@ -8,6 +8,7 @@ import SignupPage from "./pages/SignupPage";
 import MyPage from "./pages/MyPage";
 import GoogleCallbackPage from "./pages/GoogleCallbackPage";
 import LPDetailPage from "./pages/LPDetailPage";
+import SearchPage from "./pages/SearchPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 import PublicOnlyLayout from "./layouts/PublicOnlyLayout";
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
 		errorElement: <NotFoundPage />,
 		children: [
 			{ index: true, element: <HomePage /> },
+			{ path: "search", element: <SearchPage /> },
 			{ path: "lps/:id", element: <LPDetailPage /> },
 			{ path: "v1/auth/google/callback", element: <GoogleCallbackPage /> },
 			{
