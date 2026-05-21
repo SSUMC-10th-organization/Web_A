@@ -1,10 +1,10 @@
 import { useRef, useState, type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import lpRecord from "../assets/lp-record.png";
-import FormInput from "./FormInput";
+import { lpRecord } from "../../assets";
+import FormInput from "../common/FormInput";
 
-import { useAuth } from "../context/AuthContext";
-import { useCreateLP } from "../hooks/mutations/useCreateLP";
+import { useAuth } from "../../context/AuthContext";
+import { useCreateLP } from "../../hooks/mutations/useCreateLP";
 
 type CreateLPModalProps = {
   onClose: () => void;

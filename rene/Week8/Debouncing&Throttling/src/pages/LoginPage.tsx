@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { useLoginForm } from "../hooks/useLoginForm";
-import FormInput from "../components/FormInput";
-import Button from "../components/Button";
-import googleLogo from "../assets/google_logo.png";
+import { useLoginForm } from "../hooks/forms/useLoginForm";
+import FormInput from "../components/common/FormInput";
+import Button from "../components/common/Button";
+import { googleLogo } from "../assets";
 
 const LoginPage = () => {
   const navigate = useNavigate();

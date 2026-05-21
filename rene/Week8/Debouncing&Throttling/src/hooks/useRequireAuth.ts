@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-// 인증이 필요한 페이지에서 사용되는 커스텀 훅
+// 인증이 필요한 페이지(LPDetailPage)에서 사용되는 커스텀 훅
 export const useRequireAuth = () => {
   const { accessToken } = useAuth();
   const navigate = useNavigate();

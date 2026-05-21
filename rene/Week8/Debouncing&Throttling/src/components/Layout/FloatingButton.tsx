@@ -1,4 +1,4 @@
-import plusIcon from "../assets/plus-icon.svg";
+import { plusIcon } from "../../assets";
 
 type FloatingButtonProps = {
   onClick?: () => void;

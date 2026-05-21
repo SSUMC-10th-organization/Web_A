@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import defaultProfile from "../assets/default_profile.svg";
-import FormInput from "./FormInput";
-import { useUpdateProfile } from "../hooks/mutations/useUpdateProfile";
-import type { ResponseMyInfoDto } from "../types/auth";
+import { defaultProfile } from "../../assets";
+import FormInput from "../common/FormInput";
+import { useUpdateProfile } from "../../hooks/mutations/useUpdateProfile";
 
-import type { RequestUpdateProfileDto } from "../types/auth";
+import type { ResponseMyInfoDto } from "../../types/auth";
+import type { RequestUpdateProfileDto } from "../../types/auth";
 
 type EditProfileModalProps = {
   onClose: () => void;

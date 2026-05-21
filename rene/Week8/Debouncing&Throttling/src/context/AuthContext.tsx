@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useLocalStorage } from "../hooks/utils/useLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../constants/key";
 import type { UserInfo } from "../types/auth";
 

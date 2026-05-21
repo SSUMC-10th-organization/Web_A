@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema, type SignupFormValues } from "../schemas/signupSchema";
-import { postSignup, postSignin } from "../apis/auth";
-import { useLocalStorage } from "./useLocalStorage";
-import { LOCAL_STORAGE_KEY } from "../constants/key";
+import { signupSchema, type SignupFormValues } from "../../schemas/signupSchema";
+import { postSignup, postSignin } from "../../apis/auth";
+import { useLocalStorage } from "../utils/useLocalStorage";
+import { LOCAL_STORAGE_KEY } from "../../constants/key";
 
 export const useSignupForm = () => {
   const navigate = useNavigate();

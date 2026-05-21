@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getMyInfo } from "../apis/auth";
 import type { ResponseMyInfoDto } from "../types/auth";
-import defaultProfile from "../assets/default_profile.svg";
-import EditProfileModal from "../components/EditProfileModal";
+import { defaultProfile } from "../assets";
+import EditProfileModal from "../components/modals/EditProfileModal";
 
 type MyInfo = ResponseMyInfoDto["data"];
 

@@ -1,7 +1,7 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signinSchema, type SigninFormValues } from "../schemas/signinSchema";
-import { useLogin } from "./mutations/useLogin";
+import { signinSchema, type SigninFormValues } from "../../schemas/signinSchema";
+import { useLogin } from "../mutations/useLogin";
 
 export const useLoginForm = () => {
   const { mutate: login, isPending } = useLogin();

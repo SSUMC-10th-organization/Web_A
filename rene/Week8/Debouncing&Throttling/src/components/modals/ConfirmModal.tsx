@@ -1,11 +1,11 @@
+import { createPortal } from "react-dom";
+
 type ConfirmModalProps = {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
   isPending?: boolean;
 };
-
-import { createPortal } from "react-dom";
 
 const ConfirmModal = ({ message, onConfirm, onCancel, isPending }: ConfirmModalProps) => {
   return createPortal(

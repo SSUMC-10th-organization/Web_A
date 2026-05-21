@@ -1,7 +1,7 @@
-import { useSignupForm } from "../hooks/useSignupForm";
-import defaultProfile from "../assets/default_profile.svg";
-import FormInput from "../components/FormInput";
-import Button from "../components/Button";
+import { useSignupForm } from "../hooks/forms/useSignupForm";
+import { defaultProfile } from "../assets";
+import FormInput from "../components/common/FormInput";
+import Button from "../components/common/Button";
 
 const SignupPage = () => {
   const {

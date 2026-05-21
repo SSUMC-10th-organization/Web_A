@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { LOCAL_STORAGE_KEY } from "../constants/key";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useLocalStorage } from "../hooks/utils/useLocalStorage";
 
 const GoogleCallbackPage = () => {
   const accessTokenStorage = useLocalStorage(LOCAL_STORAGE_KEY.accessToken);

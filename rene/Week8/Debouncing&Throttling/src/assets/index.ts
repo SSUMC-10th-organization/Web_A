@@ -1,0 +1,10 @@
+export { default as backIcon } from "./back-icon.svg";
+export { default as defaultProfile } from "./default_profile.svg";
+export { default as editIcon } from "./edit-icon.svg";
+export { default as googleLogo } from "./google_logo.png";
+export { default as lpRecord } from "./lp-record.png";
+export { default as menuIcon } from "./menu-icon.svg";
+export { default as personIcon } from "./person-icon.svg";
+export { default as plusIcon } from "./plus-icon.svg";
+export { default as searchIcon } from "./search-icon.svg";
+export { default as trashIcon } from "./trash-icon.svg";

@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import defaultProfile from "../assets/default_profile.svg";
-import backIcon from "../assets/back-icon.svg";
-import editIcon from "../assets/edit-icon.svg";
-import trashIcon from "../assets/trash-icon.svg";
-import LoadingSpinner from "../components/LoadingSpinner";
-import ErrorFallback from "../components/ErrorFallback";
+import { defaultProfile, backIcon, editIcon, trashIcon } from "../assets";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import ErrorFallback from "../components/common/ErrorFallback";
 import CommentSheet from "../components/CommentSheet";
 import { useGetLPDetail } from "../hooks/queries/useGetLPDetail";
 import { useRequireAuth } from "../hooks/useRequireAuth";

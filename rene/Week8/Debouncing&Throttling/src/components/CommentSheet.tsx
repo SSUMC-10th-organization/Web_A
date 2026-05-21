@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
-import SortButtonGroup from "./SortButtonGroup";
-import defaultProfile from "../assets/default_profile.svg";
+import { useIntersectionObserver } from "../hooks/utils/useIntersectionObserver";
+import SortButtonGroup from "./common/SortButtonGroup";
+import { defaultProfile } from "../assets";
 import { useInfiniteComments } from "../hooks/queries/useInfiniteComments";
 import { useCreateComment, useUpdateComment, useDeleteComment } from "../hooks/mutations/useCommentMutations";
 import { useAuth } from "../context/AuthContext";
