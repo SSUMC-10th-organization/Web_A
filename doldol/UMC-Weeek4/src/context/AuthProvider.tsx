@@ -29,16 +29,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     const login = async (signinData: RequestSigninDto): Promise<boolean> => {
         try {
             const { data } = await postSignin(signinData);
-
             if (data) {
-                const newAccessToken = data.accessToken;
-                const newRefreshToken = data.refreshToken;
-
-                setAccessTokenInStorage(newAccessToken);
-                setRefreshTokenInStorage(newRefreshToken);
-
-                setAccessToken(newAccessToken);
-                setRefreshToken(newRefreshToken);
+                setAccessTokenInStorage(data.accessToken);
+                setRefreshTokenInStorage(data.refreshToken);
+                setAccessToken(data.accessToken);
+                setRefreshToken(data.refreshToken);
                 return true;
             }
             return false;
@@ -63,9 +58,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     };
 
     return (
-        <AuthContext.Provider
-            value={{ accessToken, refreshToken, login, logout }}
-        >
+        <AuthContext.Provider value={{ accessToken, refreshToken, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
