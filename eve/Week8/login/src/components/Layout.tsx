@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'; // 🚨 useEffect 임포트 추가
+import { useState, useRef, useEffect } from 'react'; 
 import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -30,20 +30,6 @@ const Layout = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
   const user = authStorage.getUserInfo();
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isSidebarOpen) {
-        closeSidebar();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isSidebarOpen, closeSidebar]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
