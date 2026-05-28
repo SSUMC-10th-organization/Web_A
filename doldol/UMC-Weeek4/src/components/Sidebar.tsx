@@ -32,7 +32,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 	}, [isOpen, onClose]);
 
 	// 사이드바 열릴 때 배경 스크롤 방지
-	// overflow: hidden 으로 뒷배경 콘텐츠가 스크롤되는 현상 방지
+	// hidden 으로 뒷배경 콘텐츠가 스크롤되는 현상 방지
+	// 안열린 경우 클린업 해서 다시 스크롤 ㄱㄴ하게
 	useEffect(() => {
 		if (isOpen) {
 			document.body.style.overflow = "hidden";
@@ -67,7 +68,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 				/>
 			)}
 
-			{/* 사이드바 transition 으로 자연스러운 애니메이션 */}
+			{/* transition-transform 으로 부드러운 전환 */}
 			<aside
 				className={[
 					"fixed top-0 left-0 z-40 flex flex-col w-56",

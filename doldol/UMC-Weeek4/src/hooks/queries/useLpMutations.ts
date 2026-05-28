@@ -50,6 +50,7 @@ export function useLikeLp(lpId: number, myUserId?: number) {
 			queryKey: [QUERY_KEY.lp, lpId],
 		});
 
+		// 스냅샷 저장
 		const previous = queryClient.getQueryData<ResponseLpDetailDto>([
 			QUERY_KEY.lp,
 			lpId,
@@ -70,6 +71,7 @@ export function useLikeLp(lpId: number, myUserId?: number) {
 			},
 		);
 
+		// 콜백용 previous
 		return { previous };
 	};
 
