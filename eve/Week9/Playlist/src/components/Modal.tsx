@@ -4,11 +4,11 @@ export default function Modal() {
   const { confirmClearCart, closeModal } = useCartStore();
 
   return (
-    <aside className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-2xl max-w-sm w-full mx-4 shadow-xl text-center">
+    <aside className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50 transition-all">
+
+      <div className="bg-white p-6 rounded-2xl max-w-sm w-full mx-4 shadow-2xl text-center border border-white/40">
         <h4 className="text-lg font-bold text-gray-800 mb-2">장바구니를 비우시겠습니까?</h4>
         <p className="text-sm text-gray-500 mb-6">담겨있는 모든 음반 플레이리스트가 삭제됩니다.</p>
-        
         <div className="flex justify-center gap-3">
           <button
             type="button"
