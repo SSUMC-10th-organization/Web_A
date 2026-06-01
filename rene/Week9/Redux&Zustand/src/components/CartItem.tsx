@@ -1,9 +1,8 @@
-import { useAppDispatch } from '../hooks/useCustomRedux';
-import { increase, decrease } from '../features/cart/cartSlice';
+import useCartStore from '../zustand/useCartStore';
 import type { CartItemType } from '../types/cart';
 
 export default function CartItem({ id, title, singer, price, img, amount }: CartItemType) {
-  const dispatch = useAppDispatch();
+  const { increase, decrease } = useCartStore();
 
   return (
     <div className="flex items-center px-8 py-5 border-b border-gray-200">
@@ -19,7 +18,7 @@ export default function CartItem({ id, title, singer, price, img, amount }: Cart
       </div>
       <div className="flex items-center gap-3 ml-4">
         <button
-          onClick={() => dispatch(decrease(id))}
+          onClick={() => decrease(id)}
           className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-gray-600 font-medium transition-colors cursor-pointer"
         >
           −
@@ -28,7 +27,7 @@ export default function CartItem({ id, title, singer, price, img, amount }: Cart
           {amount}
         </span>
         <button
-          onClick={() => dispatch(increase(id))}
+          onClick={() => increase(id)}
           className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded text-gray-600 font-medium transition-colors cursor-pointer"
         >
           +

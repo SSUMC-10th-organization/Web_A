@@ -1,8 +1,8 @@
-import { useAppSelector } from '../hooks/useCustomRedux';
+import useCartStore from '../zustand/useCartStore';
 import CartItem from './CartItem';
 
 export default function CartList() {
-  const cartItems = useAppSelector((state) => state.cart.cartItems);
+  const { cartItems } = useCartStore();
 
   return (
     <div>
