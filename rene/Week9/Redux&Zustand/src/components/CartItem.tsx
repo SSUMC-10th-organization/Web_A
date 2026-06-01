@@ -2,7 +2,8 @@ import useCartStore from '../zustand/useCartStore';
 import type { CartItemType } from '../types/cart';
 
 export default function CartItem({ id, title, singer, price, img, amount }: CartItemType) {
-  const { increase, decrease } = useCartStore();
+  const increase = useCartStore((state) => state.increase);
+  const decrease = useCartStore((state) => state.decrease);
 
   return (
     <div className="flex items-center px-8 py-5 border-b border-gray-200">

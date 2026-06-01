@@ -2,7 +2,7 @@ import useCartStore from '../zustand/useCartStore';
 import CartItem from './CartItem';
 
 export default function CartList() {
-  const { cartItems } = useCartStore();
+  const cartItems = useCartStore((state) => state.cartItems);
 
   return (
     <div>

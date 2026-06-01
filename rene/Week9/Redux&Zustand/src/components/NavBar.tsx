@@ -1,7 +1,7 @@
 import useCartStore from '../zustand/useCartStore';
 
 export default function NavBar() {
-  const { amount } = useCartStore();
+  const amount = useCartStore((state) => state.amount);
 
   return (
     <nav className="bg-[#1e2535] text-white px-8 py-4 flex items-center justify-between">

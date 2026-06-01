@@ -13,66 +13,54 @@ type CartActions = {
   decrease: (id: string) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
-  calculateTotals: () => void;
 };
 
 type CartStore = CartState & CartActions;
 
-const useCartStore = create<CartStore>((set, get) => ({
-  // 초기 상태 설정
-  cartItems: cartItemsData,
-  amount: cartItemsData.reduce((sum, item) => sum + item.amount, 0),
-  total: cartItemsData.reduce(
+// 상태 계산 로직을 별도의 함수로 분리
+const recalculate = (cartItems: CartItemType[]) => ({
+  amount: cartItems.reduce((sum, item) => sum + item.amount, 0),
+  total: cartItems.reduce(
     (sum, item) => sum + Number(item.price) * item.amount,
     0,
   ),
+});
 
-  // 상태 업데이트 함수들
+const useCartStore = create<CartStore>((set) => ({
+  cartItems: cartItemsData,
+  ...recalculate(cartItemsData),
+
   increase: (id) => {
-    set((state) => ({
-      cartItems: state.cartItems.map((item) =>
+    set((state) => {
+      const cartItems = state.cartItems.map((item) =>
         item.id === id ? { ...item, amount: item.amount + 1 } : item,
-      ),
-    }));
-    get().calculateTotals();
+      );
+      return { cartItems, ...recalculate(cartItems) };
+    });
   },
 
   decrease: (id) => {
     set((state) => {
       const item = state.cartItems.find((i) => i.id === id);
       if (!item) return state;
-      if (item.amount - 1 < 1) {
-        return {
-          cartItems: state.cartItems.filter((i) => i.id !== id),
-        };
-      }
-      return {
-        cartItems: state.cartItems.map((i) =>
-          i.id === id ? { ...i, amount: i.amount - 1 } : i,
-        ),
-      };
+      const cartItems =
+        item.amount - 1 < 1
+          ? state.cartItems.filter((i) => i.id !== id)
+          : state.cartItems.map((i) =>
+              i.id === id ? { ...i, amount: i.amount - 1 } : i,
+            );
+      return { cartItems, ...recalculate(cartItems) };
     });
-    get().calculateTotals();
   },
 
   removeItem: (id) => {
-    set((state) => ({
-      cartItems: state.cartItems.filter((item) => item.id !== id),
-    }));
-    get().calculateTotals();
+    set((state) => {
+      const cartItems = state.cartItems.filter((item) => item.id !== id);
+      return { cartItems, ...recalculate(cartItems) };
+    });
   },
 
   clearCart: () => set({ cartItems: [], amount: 0, total: 0 }),
-
-  calculateTotals: () => {
-    set((state) => ({
-      amount: state.cartItems.reduce((sum, item) => sum + item.amount, 0),
-      total: state.cartItems.reduce(
-        (sum, item) => sum + Number(item.price) * item.amount,
-        0,
-      ),
-    }));
-  },
 }));
 
 export default useCartStore;

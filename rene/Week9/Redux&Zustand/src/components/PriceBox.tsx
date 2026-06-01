@@ -2,8 +2,8 @@ import useCartStore from '../zustand/useCartStore';
 import useModalStore from '../zustand/useModalStore';
 
 export default function PriceBox() {
-  const { total } = useCartStore();
-  const { openModal } = useModalStore();
+  const total = useCartStore((state) => state.total);
+  const openModal = useModalStore((state) => state.openModal);
 
   return (
     <div className="px-8 py-5 border-t border-gray-200 flex items-center justify-between">
