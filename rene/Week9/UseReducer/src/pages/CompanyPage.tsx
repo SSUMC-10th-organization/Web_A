@@ -10,6 +10,7 @@ interface CompanyAction {
   payload: string;
 };
 
+// 리듀서 함수 - 상태 업데이트 로직을 정의
 function reducer(state: CompanyState, action: CompanyAction): CompanyState {
   const { type, payload } = action;
 
@@ -25,12 +26,14 @@ function reducer(state: CompanyState, action: CompanyAction): CompanyState {
 
 
 export default function CompanyPage() {
-  const [company, setCompany] = useState('Kakao');
-
+  // useState를 사용하여 입력된 회사 이름을 관리
+  const [company, setCompany] = useState('');
   const handleChangeCompany = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCompany(e.target.value);
   };
+
   
+  // useReducer를 사용하여 회사 이름과 에러 상태를 관리
   const [state, dispatch] = useReducer(reducer, {
     name: 'Naver',
     error: null,
