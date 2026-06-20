@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useSearch, useNavigate } from '@tanstack/react-router'
 import SearchForm from '../components/SearchForm'
 import MovieCardGrid from '../components/MovieCardGrid'
@@ -12,9 +12,9 @@ export default function MovieSearchPage() {
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null)
   const { data, isLoading, error } = useMovieSearch(searchParams)
 
-  const handleSearch = (params: SearchParams) => {
+  const handleSearch = useCallback((params: SearchParams) => {
     navigate({ search: params })
-  }
+  }, [navigate])
 
   return (
     <div className="min-h-screen bg-bg px-4 py-8">

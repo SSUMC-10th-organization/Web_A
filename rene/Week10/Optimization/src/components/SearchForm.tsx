@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import type { SearchParams } from '../types/movie'
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
   onSearch: (params: SearchParams) => void
 }
 
-export default function SearchForm({ defaultValues, onSearch }: Props) {
+const SearchForm = memo(function SearchForm({ defaultValues, onSearch }: Props) {
   const [query, setQuery] = useState(defaultValues.query)
   const [includeAdult, setIncludeAdult] = useState(defaultValues.includeAdult)
   const [language, setLanguage] = useState<SearchParams['language']>(defaultValues.language)
@@ -79,4 +79,6 @@ export default function SearchForm({ defaultValues, onSearch }: Props) {
       </button>
     </form>
   )
-}
+})
+
+export default SearchForm

@@ -1,19 +1,20 @@
+import { memo } from 'react'
 import type { Movie } from '../types/movie'
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w300'
 
 interface Props {
   movie: Movie
-  onClick: () => void
+  onClick: (id: number) => void
 }
 
-export default function MovieCard({ movie, onClick }: Props) {
+const MovieCard = memo(function MovieCard({ movie, onClick }: Props) {
   const posterUrl = movie.poster_path
     ? `${POSTER_BASE}${movie.poster_path}`
     : null
 
   return (
-    <div onClick={onClick} className="bg-surface rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+    <div onClick={() => onClick(movie.id)} className="bg-surface rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer">
       <div className="relative">
         {posterUrl ? (
           <img
@@ -38,4 +39,6 @@ export default function MovieCard({ movie, onClick }: Props) {
       </div>
     </div>
   )
-}
+})
+
+export default MovieCard

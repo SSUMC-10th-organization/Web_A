@@ -1,21 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
+import axiosInstance from '../apis/axios'
 import type { MovieDetail } from '../types/movie'
 
-const BASE_URL = 'https://api.themoviedb.org/3'
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY
-
 async function fetchMovieDetail(movieId: number, language: string): Promise<MovieDetail> {
-  const params = new URLSearchParams({ language })
-
-  const res = await fetch(`${BASE_URL}/movie/${movieId}?${params}`, {
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-      accept: 'application/json',
-    },
+  const { data } = await axiosInstance.get<MovieDetail>(`movie/${movieId}`, {
+    params: { language },
   })
-
-  if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
-  return res.json()
+  return data
 }
 
 export function useMovieDetail(movieId: number | null, language: string) {
