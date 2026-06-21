@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { LP } from "../../types/lp";
 import LPCard from "./LPCard";
 
@@ -7,11 +8,11 @@ interface LPGridProps {
   emptyMessage?: string;
 }
 
-const LPGrid = ({
-  lps,
-  gridClass = "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6",
-  emptyMessage = "등록된 LP가 없습니다.",
-}: LPGridProps) => {
+const LPGrid = memo(({ 
+  lps, 
+  gridClass = "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6", 
+  emptyMessage = "등록된 LP가 없습니다." }: LPGridProps
+) => {
   if (lps.length === 0) {
     return (
       <div className="text-center py-20 text-zinc-500">{emptyMessage}</div>
@@ -25,6 +26,6 @@ const LPGrid = ({
       ))}
     </div>
   );
-};
+});
 
 export default LPGrid;

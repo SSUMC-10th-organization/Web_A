@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { defaultProfile, backIcon, editIcon, trashIcon } from "../assets";
 import LoadingSpinner from "../components/common/LoadingSpinner";
@@ -20,6 +20,7 @@ const LPDetailPage = () => {
   const { data: lp, isPending, isError, refetch } = useGetLPDetail(lpId, isAuthenticated);
   const { mutate: toggleLike } = useToggleLike(lpId); // 좋아요 토글 훅
   const [isCommentOpen, setIsCommentOpen] = useState(false);
+
 
   if (!isAuthenticated) return null;
   if (isPending) return <LoadingSpinner />;
@@ -197,7 +198,7 @@ const LPDetailPage = () => {
       {/* 댓글 Bottom Sheet */}
       <CommentSheet
         isOpen={isCommentOpen}
-        onClose={() => setIsCommentOpen(false)}
+        onClose={setIsCommentOpen}
         lpId={lpId}
       />
     </div>

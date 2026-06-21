@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
 import { useIntersectionObserver } from "../hooks/utils/useIntersectionObserver";
 import SortButtonGroup from "./common/SortButtonGroup";
 import { defaultProfile } from "../assets";
@@ -21,11 +21,11 @@ const CommentSkeleton = () => (
 
 interface Props {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (isOpen: boolean) => void;
   lpId: number;
 }
 
-const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
+const CommentSheet = memo(({ isOpen, onClose, lpId }: Props) => {
   const { user } = useAuth();
   const [commentOrder, setCommentOrder] = useState<OrderType>("asc");
   const [newComment, setNewComment] = useState("");
@@ -91,7 +91,7 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
         className={`fixed inset-0 bg-black/60 z-40 transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        onClick={onClose}
+        onClick={() => onClose(false)}
       />
 
       {/* 바텀 시트 */}
@@ -112,7 +112,7 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
             댓글{comments.length > 0 ? ` ${comments.length}개` : ""}
           </p>
           <button
-            onClick={onClose}
+            onClick={() => onClose(false)}
             className="text-zinc-400 hover:text-white transition-colors p-1"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -265,6 +265,6 @@ const CommentSheet = ({ isOpen, onClose, lpId }: Props) => {
       </div>
     </>
   );
-};
+});
 
 export default CommentSheet;

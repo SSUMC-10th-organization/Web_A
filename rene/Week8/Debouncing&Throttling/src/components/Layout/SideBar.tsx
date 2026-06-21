@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { searchIcon, personIcon } from "../../assets";
 import ConfirmModal from "../modals/ConfirmModal";
 import { useWithdraw } from "../../hooks/mutations/useWithdraw";
 
-const SideBar = () => {
+const SideBar = memo(() => {
   const [showConfirm, setShowConfirm] = useState(false);
   const { mutate: withdraw, isPending } = useWithdraw(() => setShowConfirm(false));
   const navigate = useNavigate();
@@ -50,6 +50,6 @@ const SideBar = () => {
       )}
     </>
   );
-};
+});
 
 export default SideBar;
