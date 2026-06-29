@@ -1,4 +1,6 @@
-const Footer = () => {
+import { memo } from "react";
+
+const Footer = memo(() => {
   return (
     <footer className="w-full bg-black text-gray-400 py-10 px-8 mt-auto">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between gap-6">
@@ -31,6 +33,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
 
 export default Footer;

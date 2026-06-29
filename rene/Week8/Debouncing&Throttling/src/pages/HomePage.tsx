@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import FloatingButton from "../components/Layout/FloatingButton";
 import LPGrid from "../components/LPCard/LPGrid";
 import LPCardSkeleton from "../components/LPCard/LPCardSkeleton";
@@ -36,7 +36,7 @@ const HomePage = () => {
     isFetchingNextPage,
   } = useInfiniteLPs(sort);
 
-  const lps = data?.pages.flatMap((page) => page.data) ?? [];
+  const lps = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data]);
 
   const throttledFetchNextPage = useThrottle(fetchNextPage, 1000*3 );
 

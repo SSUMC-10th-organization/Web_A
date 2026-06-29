@@ -21,6 +21,7 @@ const LPDetailPage = () => {
   const { mutate: toggleLike } = useToggleLike(lpId); // 좋아요 토글 훅
   const [isCommentOpen, setIsCommentOpen] = useState(false);
 
+
   if (!isAuthenticated) return null;
   if (isPending) return <LoadingSpinner />;
   if (isError || !lp) {
@@ -197,7 +198,7 @@ const LPDetailPage = () => {
       {/* 댓글 Bottom Sheet */}
       <CommentSheet
         isOpen={isCommentOpen}
-        onClose={() => setIsCommentOpen(false)}
+        onClose={setIsCommentOpen}
         lpId={lpId}
       />
     </div>
